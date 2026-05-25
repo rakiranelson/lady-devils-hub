@@ -1,15 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List
+from app.config import settings
 
 app = FastAPI()
 
-origins = ["https://localhost:3000"]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.ALLOWED_ORIGINS,
     # allow_credential=True,
     # allow_methods=["*"],
     # allow_headers=["*"]
