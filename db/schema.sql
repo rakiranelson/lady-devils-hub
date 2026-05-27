@@ -248,3 +248,28 @@ CREATE TABLE app_feedback (
     feedback_message TEXT NOT NULL,
     submitted_time TIMESTAMP WITHOUT TIME ZONE DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 );
+
+-- triggers --
+
+CREATE FUNCTION validate_staff_user() RETURNS TRIGGER AS $$
+    BEGIN
+        IF (
+            SELECT user_type
+            FROM users
+            WHERE id = NEW.user_id
+        ) 
+            != 'staff' THEN RAISE EXCEPTION
+            'User is not staff.';
+        END IF;
+
+        RETURN NEW;
+
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER staff_validation()
+BEFORE INSERT OR UPDATE ON staff
+FOR EACH ROW
+EXECUTIVE FUNCTION validation_staff_user();
+
+
