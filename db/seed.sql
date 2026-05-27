@@ -1,4 +1,4 @@
-INSERT INTO Semesters (semester, term_year) VALUES
+INSERT INTO semesters (semester, term_year) VALUES
 ('spring', 2024),
 ('fall', 2024),
 ('spring', 2025),
@@ -7,13 +7,13 @@ INSERT INTO Semesters (semester, term_year) VALUES
 ('fall', 2026),
 ('spring', 2027);
 
-INSERT INTO AppConfig (current_semester_id)
+INSERT INTO app_config (current_semester_id)
     SELECT id
     FROM Semesters
     WHERE semester = 'fall'
     AND term_year = 2026;
 
-INSERT INTO Users (
+INSERT INTO users (
     firstname, 
     lastname,
     user_type, 

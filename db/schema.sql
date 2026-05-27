@@ -5,7 +5,7 @@ CREATE TABLE semesters(
 
     CHECK (semester IN ('fall', 'spring')),
     CHECK (term_year >= 2020 AND term_year < 9999),
-    UNIQUE (semester, year)
+    UNIQUE (semester, term_year)
 
 );
 
