@@ -11,7 +11,7 @@ CREATE TABLE semesters(
 
 CREATE TABLE app_config (
     config_id INT NOT NULL PRIMARY KEY DEFAULT 1,
-    current_semester_id INT REFERENCES semesters(id)
+    current_semester_id NOT NULL INT REFERENCES semesters(id)
 );
 
 CREATE TABLE users (
