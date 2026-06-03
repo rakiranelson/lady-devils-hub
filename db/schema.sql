@@ -60,7 +60,7 @@ CREATE TABLE events (
     semester_id INT NOT NULL REFERENCES semesters(id),
     location_name VARCHAR(255) NOT NULL,
     location_address VARCHAR(255),
-    event_description TEXT,
+    event_details TEXT,
     category VARCHAR(30) NOT NULL,
     start_datetime TIMESTAMP,
     end_datetime TIMESTAMP,
