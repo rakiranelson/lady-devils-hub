@@ -22,7 +22,7 @@ export default function Sidebar({ items, name, profile}: SidebarProps) {
     const pathname = usePathname();
     
     return (
-        <div className=" hidden md:flex flex-col fixed h-screen bg-navigation items-center sm:w-48 font-body">
+        <div className=" hidden md:flex flex-col fixed h-screen bg-navigation items-center sm:w-48 font-body shadow-sidebar">
 
             <Link href="/">
                 <Image
@@ -35,7 +35,7 @@ export default function Sidebar({ items, name, profile}: SidebarProps) {
                 />
             </Link>
 
-            <div className="flex flex-col w-full gap-1">
+            <div className="flex flex-col w-full gap-1 flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
                 {items.map((item) => {
 
                     const isActive = pathname.startsWith(item.href);

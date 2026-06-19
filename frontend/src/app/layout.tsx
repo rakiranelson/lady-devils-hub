@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Rajdhani } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar"
+import SemesterProvider from "@/contexts/SemesterContext"
 
 const plusJakartaSans  = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -47,16 +48,20 @@ export default function RootLayout({
   };
 
 
-
   return (
     <html
       lang="en"
       className={`${plusJakartaSans.variable} ${rajdhani.variable} h-full antialiased`}
     >
-      <body className="min-h-screen flex bg-background">
-        <Sidebar items={ navItems } name={ name } profile={ profile } />
-        {children}
-      </body>
+      <SemesterProvider>
+        <body className="h-screen flex scrollbar-thumb-muted-2 scrollbar-track-transparent overflow-hidden">
+          <Sidebar items={ navItems } name={ name } profile={ profile } />
+
+          <main className="bg-background w-full md:ml-48 font-body">
+            {children}
+          </main>
+        </body>
+      </SemesterProvider>
     </html>
   );
 }
