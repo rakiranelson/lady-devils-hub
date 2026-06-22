@@ -45,27 +45,34 @@ export default function Home() {
   const events: Event[] = [
     {
       id: 1,
+      category: "practice",
       eventName: "Practice 9/3",
       locationName: "East Duke Lawn",
-      category: "practice",
       date: "Thursday Sep 03",
-      time: "5:00-7:00pm"
+      time: "5:00-7:00pm",
+      practiceType: "Regular",
+      response: "yes"
     },
     {
       id: 2,
+      category: "tournament",
       eventName: "UVA Tournament",
       locationName: "University of Virginia",
-      category: "tournament",
       date: "Saturday Sep 05 - Sunday Sep 06",
-      time: null
+      time: null,
+      response: null,
+      registered: false,
+      registrationDeadline: "9/1 @ 12:00pm"
     },
     {
       id: 3,
+      category: "practice",
       eventName: "Practice 9/8",
       locationName: "Brodie Gym",
-      category: "practice",
       date: "Thursday Sep 08",
-      time: "5:00-7:00pm"
+      time: "5:00-7:00pm",
+      practiceType: "Conditioning",
+      response: "yes"
     },
   ]
 
@@ -76,12 +83,12 @@ export default function Home() {
     <div className="h-full flex flex-col">
       <Header title="Overview" semester={ semester }></Header>
       
-      <div className="ml-6 mr-6 mt-2 overflow-y-auto">
-        <AnnouncementContainer announcementList={ announcements }></AnnouncementContainer>
+      <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-stable">
+        <AnnouncementContainer announcementList={ announcements }/>
 
-        <div>
+        <div className="mt-2">
           <p>Upcoming</p>
-          <EventContainer eventList={ events }></EventContainer>
+          <EventContainer eventList={ events }/>
         </div>
        
       </div>

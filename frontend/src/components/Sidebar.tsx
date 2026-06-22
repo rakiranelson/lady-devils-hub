@@ -22,7 +22,7 @@ export default function Sidebar({ items, name, profile}: SidebarProps) {
     const pathname = usePathname();
     
     return (
-        <div className=" hidden md:flex flex-col fixed h-screen bg-navigation items-center sm:w-48 font-body shadow-sidebar">
+        <div className=" hidden sidebar:flex flex-col fixed h-screen bg-navigation items-center sidebar:w-[min(16%,192px)] font-body shadow-sidebar">
 
             <Link href="/">
                 <Image

@@ -57,7 +57,7 @@ export default function RootLayout({
         <body className="h-screen flex scrollbar-thumb-muted-2 scrollbar-track-transparent overflow-hidden">
           <Sidebar items={ navItems } name={ name } profile={ profile } />
 
-          <main className="bg-background w-full md:ml-48 font-body">
+          <main className="bg-background w-full sidebar:ml-[min(16%,192px)] font-body">
             {children}
           </main>
         </body>
