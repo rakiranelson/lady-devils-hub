@@ -40,7 +40,7 @@ export default function Home() {
               createdTime: "1 week ago"
           },
       ];
-  /* call a function to fetch the events with earliest date )from today) first */
+  /* call a function to fetch the events with earliest date  from today) first */
 
   const events: Event[] = [
     {
@@ -56,13 +56,15 @@ export default function Home() {
     {
       id: 2,
       category: "tournament",
-      eventName: "UVA Tournament",
-      locationName: "University of Virginia",
+      eventName: "NIRSA Championship Tournament",
+      locationName: "Charlottesville, VA",
       date: "Saturday Sep 05 - Sunday Sep 06",
       time: null,
       response: null,
+      tournamentType: "Regional",
       registered: false,
-      registrationDeadline: "9/1 @ 12:00pm"
+      registrationDeadline: "9/1 @ 12:00pm",
+      deadline_passed: false
     },
     {
       id: 3,
