@@ -36,27 +36,27 @@ export function TournamentCard(tournament : TournamentProps) {
 
             <div className="px-3 pt-2">
                 <div>
-                   <div className="text-[min(1.3rem,3vw)] font-semibold truncate">
+                   <div className="text-[min(1.3rem,3.5vw)] font-semibold truncate">
                         { tournament.eventName }
                     </div>
 
-                    <div className="text-metadata text-[min(0.875rem,2vw)] -mt-1 truncate">
+                    <div className="text-metadata text-[min(0.875rem,2.5vw)] -mt-1 truncate">
                         { tournament.tournamentType }
                     </div>
 
-                    <div className="text-[min(1rem,2.5vw)] mt-2 truncate">
+                    <div className="text-[min(1rem,3vw)] mt-2 truncate">
                         { tournament.date }
                     </div>
 
-                    <div className="text-[min(1rem,2.5vw)] truncate">
+                    <div className="text-[min(1rem,3vw)] truncate">
                         { tournament.locationName }
                     </div>
 
-                    <div className={`text-[min(1rem,2.5vw)] truncate ${ !tournament.deadline_passed ? "text-warning" : "" }`}>
+                    <div className={`text-[min(1rem,3vw)] truncate ${ !tournament.deadline_passed ? "text-warning" : "" }`}>
                         Register by { tournament.registrationDeadline }
                     </div>
 
-                    <div className="flex flex-wrap justify-between mt-7 pb-4 text-[min(0.875rem,2.25vw)]">
+                    <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.25vw)]">
                         <Button title="Register"></Button>
 
                         <div className="pt-1.5 items-center h-[28px]">

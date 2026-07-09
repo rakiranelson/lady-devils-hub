@@ -66,19 +66,29 @@ export default function Home() {
       registrationDeadline: "9/1 @ 12:00pm",
       deadline_passed: false
     },
+
+    {
+      id: 4,
+      eventName: "Executive Board Meeting",
+      locationName: "Perkins",
+      category: "Other",
+      date: "Friday Sep 11",
+      time: "6:00-6:45pm",
+      response: "yes"
+    },
+
     {
       id: 3,
       category: "practice",
       eventName: "Practice 9/8",
       locationName: "Brodie Gym",
-      date: "Thursday Sep 08",
+      date: "Tuesday Sep 08",
       time: "5:00-7:00pm",
       practiceType: "Conditioning",
       response: "yes"
     },
+
   ]
-
-
 
   const semester = useContext(SemesterContext)
   return (
@@ -88,8 +98,12 @@ export default function Home() {
       <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-stable">
         <AnnouncementContainer announcementList={ announcements }/>
 
-        <div className="mt-2">
-          <p>Upcoming</p>
+        <div className="mt-3 sm:text-lg">
+          <div className="flex">
+            <p>Upcoming</p>
+            <p className="ml-auto text-muted-1 hover:text-foreground hover:cursor-pointer">See All Events &gt;</p>
+          </div>
+          
           <EventContainer eventList={ events }/>
         </div>
        

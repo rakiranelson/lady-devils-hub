@@ -1,5 +1,5 @@
 "use client";
-import { createContext} from "react";
+import { createContext } from "react";
 
 
 export const SemesterContext = createContext<string>(""); 
@@ -8,7 +8,7 @@ export const SemesterContext = createContext<string>("");
 const currentSemester = "Fall 2026"
 
 export default function SemesterProvider(
-    { children }: { children: React.ReactNode}) {
+    { children }: { children: React.ReactNode }) {
 
     return (
         <SemesterContext.Provider value={currentSemester}>

@@ -15,12 +15,12 @@ export default function AnnouncementContainer({ announcementList }: Announcement
 
 
     return (
-        <div className="h-26 w-full justify-between rounded-[5px] border-muted-2 overflow-y-auto">
-            <div className="border-b-2 border-b-muted-2/50 rounded-t-[5px] pl-3">
+        <div className="w-full justify-between rounded-[5px] border-muted-2">
+            <div className="border-b-2 border-b-muted-2/50 rounded-t-[5px] pl-3 sm:text-lg">
                 Announcements
             </div>
 
-            <div className="pt-1">
+            <div className="pt-1 h-22 overflow-y-auto">
 
                 { announcementList.length === 0 && (
                     <div className="pl-3">
