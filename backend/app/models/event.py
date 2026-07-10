@@ -16,7 +16,7 @@ class Event(Base):
     location_name: Mapped[str] = mapped_column(String(255))
 
     location_address: Mapped[Optional[str]] = mapped_column(String(255))
-    event_description: Mapped[Optional[str]]
+    event_details: Mapped[Optional[str]]
     category: Mapped[Optional[str]] = mapped_column(String(30))
 
     start_datetime: Mapped[Optional[datetime]]
