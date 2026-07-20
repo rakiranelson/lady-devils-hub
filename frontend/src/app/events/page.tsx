@@ -4,12 +4,12 @@ import { useContext } from "react";
 import { SemesterContext } from "@/contexts/SemesterContext"
 import Header from "@/components/Header"
 
-export default function ClubEvents() {
+export default function Events() {
 
   const semester = useContext(SemesterContext)
   return (
     <div className="h-full flex flex-col">
-      <Header title="Club Events" semester={ semester }>
+      <Header title="Events" semester={ semester }>
 
       </Header>
       

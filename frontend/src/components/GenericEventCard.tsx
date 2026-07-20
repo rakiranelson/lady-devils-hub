@@ -2,6 +2,11 @@ import Button from "@/components/Button"
 import MoreDetails from "@/components/MoreDetails";
 import Image from "next/image";
 
+// icons
+import CalendarIcon from "@/assets/icons/calendar.svg";
+import TimeIcon from "@/assets/icons/time.svg";
+import LocationIcon from "@/assets/icons/location.svg";
+
 export type EventProps = {
     id: number;
     eventName: string;
@@ -15,28 +20,28 @@ export type EventProps = {
 
 export function GenericEventCard(event : EventProps) {
     return (
-        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px]">
+        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200">
         
                     <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative">
 
                         { event.category === "game" && (
                             <Image
-                                            className="object-cover object-[30%_70%] opacity-40"
-                                            src="/solo-game.png"
-                                            alt="Game Banner"
-                                            fill={ true }
-                                            priority
-                                        />
+                                className="object-cover object-[30%_70%] opacity-40"
+                                src="/solo-game.png"
+                                alt="Game Banner"
+                                fill={ true }
+                                priority
+                            />
                         )}
 
                         { event.category != "game" && (
                             <Image
-                                            className="object-cover object-[30%_30%] opacity-40"
-                                            src="/community.jpg"
-                                            alt="Community Banner"
-                                            fill={ true }
-                                            priority
-                                        />
+                                className="object-cover object-[30%_30%] opacity-40"
+                                src="/community.jpg"
+                                alt="Community Banner"
+                                fill={ true }
+                                priority
+                            />
                         )}
                         
                         
@@ -52,23 +57,26 @@ export function GenericEventCard(event : EventProps) {
                         <span className="invisible">Placeholder</span>
                     </div>
 
-                    <div className="text-[min(1rem,3vw)] mt-2 truncate">
-                        { event.date }
+                    <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
+                        <CalendarIcon className="overflow-visible"/>
+                        <span className="truncate">{ event.date }</span>
                     </div>
 
-                    <div className="text-[min(1rem,3vw)] truncate">
-                        { event.time }
+                    <div className="text-[min(1rem,3vw)] flex items-center gap-2">
+                        <TimeIcon className="overflow-visible"/>
+                        <span className="truncate">{ event.time }</span>
                     </div>
 
-                    <div className="text-[min(1rem,3vw)] truncate">
-                        { event.locationName }
+                    <div className="text-[min(1rem,3vw)] flex items-center gap-2">
+                        <LocationIcon className="overflow-visible"/>
+                        <span className="truncate">{ event.locationName }</span>
                     </div>
 
-                    <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.25vw)]">
-                        <Button title="button"></Button>
+                    <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.5vw)]">
+                        <Button></Button>
 
-                        <div className="pt-1.5 items-center h-[28px]">
-                            <MoreDetails title="More Details" color="muted-2"></MoreDetails>
+                        <div className="flex items-center h-[28px]">
+                            <MoreDetails title="More Details" href="/" color="muted-2"></MoreDetails>
                         </div>
                     </div>
 

@@ -28,7 +28,7 @@ export default function AppLayout({ children }
       <DesktopSidebar />
       <MobileSidebar/>
 
-      <main className="bg-background w-full sidebar:ml-[min(16%,192px)] font-body">
+      <main className="min-w-0 bg-background w-full sidebar:ml-[min(16%,192px)] font-body">
         {children}
       </main>
     </>

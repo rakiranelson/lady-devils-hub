@@ -1,4 +1,4 @@
-import ProfileIcon from "@/components/ProfileIcon";
+import PinIcon from "@/assets/icons/pin.svg";
 
 export type AnnouncementProps = {
     id: number;
@@ -12,18 +12,18 @@ export type AnnouncementProps = {
 
 export function Announcement(announcement : AnnouncementProps) {
     return (
-        <div className={` w-full flex text-sm rounded-[5px] ${ announcement.pinned ? "bg-navigation" : ""} `}>
+        <div className={` w-full flex rounded-[5px] ${ announcement.pinned ? "" : ""} `}>
 
-            <div className="w-6 flex shrink-0 justify-center pt-[2px]">
+            <div className="w-6 flex shrink-0 justify-center pt-[2px] items-center">
                 { announcement.pinned && (
-                    <ProfileIcon initials="" size={ 14 }></ProfileIcon>
+                    <PinIcon className="mb-1 text-primary"/>
                 )}
 
             </div>
             <div className="w-22 shrink-0 whitespace-nowrap flex justify-end text-muted-2/70 sm:text-base">
                 { announcement.createdTime }
             </div>
-            <div className="ml-4 sm:text-base">
+            <div className={` ml-4 sm:text-base ${ announcement.pinned ? "font-semibold" : "text-foreground/85"} `}>
                 { announcement.content }
             </div>
 
