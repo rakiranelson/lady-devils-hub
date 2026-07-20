@@ -8,13 +8,13 @@ import TimeIcon from "@/assets/icons/time.svg";
 import LocationIcon from "@/assets/icons/location.svg";
 
 export type EventProps = {
-    id: number;
-    eventName: string;
-    locationName: string;
-    category: string;
-    date: string | null;
-    time: string | null;
-    response: string | null;
+    id?: number;
+    eventName?: string;
+    locationName?: string;
+    category?: string;
+    date?: string | null;
+    time?: string | null;
+    response?: string | null;
 };
 
 

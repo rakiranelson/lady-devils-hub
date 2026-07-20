@@ -9,6 +9,7 @@ import EventContainer from "@/components/EventContainer";
 import { Event } from "@/components/EventContainer";
 import Carousel from "@/components/Carousel";
 import { CarouselItem } from "@/components/Carousel";
+import useMediaQuery from "@/hooks/useMediaQuery";
 
 
 export default function Home() {
@@ -191,6 +192,16 @@ export default function Home() {
 
 
   const semester = useContext(SemesterContext)
+
+  const isThreeColumns = useMediaQuery("(min-width: 640px)");
+
+  const visibleEvents =
+    isThreeColumns === null // remove the null thing later
+        ? null
+        : isThreeColumns
+        ? events.slice(0, 3)
+        : events.slice(0, 4);
+  
   return (
     <div className="h-full flex flex-col">
       <Header title="Overview" semester={ semester }></Header>
@@ -204,7 +215,7 @@ export default function Home() {
             <p className="ml-auto text-muted-1 hover:text-foreground hover:cursor-pointer">See All Events &gt;</p>
           </div>
           
-          <EventContainer eventList={ events }/>
+          <EventContainer eventList={ visibleEvents } skeletonCount={3}/>
         </div>
 
         <div className="mt-4 sm:text-lg">

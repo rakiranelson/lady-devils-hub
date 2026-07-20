@@ -8,17 +8,17 @@ import LocationIcon from "@/assets/icons/location.svg";
 import DeadlineIcon from "@/assets/icons/deadline.svg";
 
 export type TournamentProps = {
-    id: number;
-    category: string;
-    eventName: string;
-    locationName: string;
-    date: string | null;
-    time: string | null;
-    tournamentType: string;
-    response: string | null;
-    registered: boolean;
-    registrationDeadline: string;
-    deadline_passed: boolean
+    id?: number;
+    category?: string;
+    eventName?: string;
+    locationName?: string;
+    date?: string | null;
+    time?: string | null;
+    tournamentType?: string;
+    response?: string | null;
+    registered?: boolean;
+    registrationDeadline?: string;
+    deadline_passed?: boolean
 
 };
 

@@ -8,14 +8,14 @@ import TimeIcon from "@/assets/icons/time.svg";
 import LocationIcon from "@/assets/icons/location.svg";
 
 export type PracticeProps = {
-    id: number;
-    category: string;
-    eventName: string;
-    locationName: string;
-    date: string | null;
-    time: string | null;
-    practiceType: string;
-    response: string | null;
+    id?: number;
+    category?: string;
+    eventName?: string;
+    locationName?: string;
+    date?: string | null;
+    time?: string | null;
+    practiceType?: string;
+    response?: string | null;
 
 };
 
