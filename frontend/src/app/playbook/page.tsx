@@ -9,11 +9,9 @@ export default function Playbook() {
   const semester = useContext(SemesterContext)
   return (
     <div className="h-full flex flex-col">
-      <Header title="Team Playbook" semester={ semester }>
-
-      </Header>
+      <Header title="Team Playbook" semester={ semester }/>
       
-      <div className="ml-6 mt-2 overflow-y-auto">body</div>
+      <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-auto mb-2">body</div>
     </div>
   );
 }

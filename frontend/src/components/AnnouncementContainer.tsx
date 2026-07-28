@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { Announcement, AnnouncementProps, AnnouncementDetails} from "@/components/Announcement";
+import useScrollFade from "@/hooks/useScrollFade";
 
 type AnnouncementContainerProps = {
     announcementList: AnnouncementProps[];
@@ -15,35 +15,7 @@ export default function AnnouncementContainer({ announcementList }: Announcement
     const regularAnnouncements =
     announcementList.filter(a => !a.pinned);
 
-    const scrollContainer = useRef<HTMLDivElement>(null);
-    const [showFade, setShowFade] = useState(false);
-
-    const updateFade = () => {
-
-        if (scrollContainer.current) {
-            const { scrollTop, scrollHeight, clientHeight } = scrollContainer.current;
-            const buffer = 1
-
-            setShowFade(scrollTop + clientHeight < scrollHeight - buffer);
-        }
-    };
-
-    useEffect(() => {
-        updateFade();
-
-        const observer = new ResizeObserver(updateFade);
-
-        if (scrollContainer.current) {
-            observer.observe(scrollContainer.current);
-        }
-
-        return () => observer.disconnect();
-    }, []);
-
-    const handleScroll = () => {
-        updateFade();
-    };
-
+    const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>();
 
     return (
         <div className="w-full justify-between rounded-[5px] border-muted-2 relative">

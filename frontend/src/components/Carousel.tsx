@@ -8,10 +8,12 @@ export type CarouselItem = PlayProps;
 
 type CarouselProps = {
     items: CarouselItem[];
+    compactOnShortScreen?: boolean;
 };
 
-export default function Carousel({ items }: CarouselProps) {
+export default function Carousel({ items, compactOnShortScreen = false }: CarouselProps) {
 
+    // temp skeleton
     if (items.length === 0) {
         return (
             <div className="w-full overflow-x-auto scrollbar-thin flex gap-4 pb-3">
@@ -58,19 +60,19 @@ export default function Carousel({ items }: CarouselProps) {
         <div className="flex">
 
             <button onClick={scrollPrev} className={` mr-4 ${ canScrollLeft ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} `}>
-                <LeftArrowIcon/>
+                <LeftArrowIcon className={` ${ canScrollLeft ? "text-foreground" : "text-foreground/25"} `}/>
             </button>
 
             <div ref={carouselRef} onScroll={handleScroll} className="w-full overflow-x-auto snap-x snap-proximity scrollbar-none flex gap-4 p-2 scroll-px-2">
 
                 {items.map((item) => {
-                    return <PlayCard key={ item.id } { ...item }/>
+                    return <PlayCard key={ item.id } { ...item } compact={compactOnShortScreen}/>
                 })}
                     
             </div>
 
             <button onClick={scrollNext} className={` ml-4 ${ canScrollRight ? "hover:cursor-pointer" : "hover:cursor-not-allowed"} `}>
-                <RightArrowIcon/>
+                <RightArrowIcon className={` ${ canScrollRight ? "text-foreground" : "text-foreground/25"} `}/>
             </button>
 
         </div>

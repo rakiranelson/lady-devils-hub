@@ -38,7 +38,7 @@ const user = {
       { label: "Team Logistics", href: "/logistics"},
       { label: "Events", href: "/events"},
       { label: "Playbook", href: "/playbook"},
-      { label: "Members", href: "/members"},
+      { label: "Roster", href: "/roster"},
       { label: "Resources", href: "/resources"},
       { label: "Feedback", href: "/feedback"}
     ]

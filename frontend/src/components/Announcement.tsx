@@ -16,7 +16,7 @@ export function Announcement(announcement : AnnouncementProps) {
 
             <div className="w-6 flex shrink-0 justify-center pt-[2px] items-center">
                 { announcement.pinned && (
-                    <PinIcon className="mb-1 text-primary"/>
+                    <PinIcon className="mb-1 text-primary animate-shake"/>
                 )}
 
             </div>

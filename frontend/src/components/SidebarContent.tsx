@@ -39,7 +39,7 @@ export default function SidebarContent() {
             <div className="border-t-2 border-t-muted-1 mt-auto p-2 w-full flex items-center gap-2">
                 <ProfileIcon initials={ profile.initials } size={ profile.size } />
                 <div className="flex flex-col mt-1">
-                    <span className="text-sm">{ name }</span>
+                    <span className="text-sm -mb-1">{ name }</span>
                     <div className="group hover:cursor-pointer">
                         <LogoutIcon className="inline text-muted-2 mb-0.5 -mr-0.5 group-hover:text-foreground"/>
                         <span className="text-sm text-muted-2 group-hover:text-foreground"> Sign Out </span>

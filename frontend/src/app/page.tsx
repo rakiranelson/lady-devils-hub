@@ -5,11 +5,12 @@ import { SemesterContext } from "@/contexts/SemesterContext"
 import Header from "@/components/Header"
 import AnnouncementContainer from "@/components/AnnouncementContainer";
 import { AnnouncementProps } from "@/components/Announcement";
-import EventContainer from "@/components/EventContainer";
-import { Event } from "@/components/EventContainer";
+import { EventContainer, Event } from "@/components/EventContainer";
 import Carousel from "@/components/Carousel";
 import { CarouselItem } from "@/components/Carousel";
 import useMediaQuery from "@/hooks/useMediaQuery";
+import OpenPageIcon from "@/assets/icons/openPage.svg";
+import Link from "next/link";
 
 
 export default function Home() {
@@ -201,10 +202,13 @@ export default function Home() {
         : isThreeColumns
         ? events.slice(0, 3)
         : events.slice(0, 4);
+
+  
+    const isShortScreen = useMediaQuery("(min-width: 53.125rem) and (max-height: 43.9rem)");
   
   return (
     <div className="h-full flex flex-col">
-      <Header title="Overview" semester={ semester }></Header>
+      <Header title="Overview" semester={ semester }/>
       
       <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-auto mb-2">
         <AnnouncementContainer announcementList={ announcements }/>
@@ -212,7 +216,10 @@ export default function Home() {
         <div className="mt-3 sm:text-lg">
           <div className="flex">
             <p>Upcoming</p>
-            <p className="ml-auto text-muted-1 hover:text-foreground hover:cursor-pointer">See All Events &gt;</p>
+            <div className="ml-auto text-muted-1 hover:text-foreground hover:cursor-pointer">
+              <Link href={ "/events" }>See All Events</Link>
+              <OpenPageIcon className="inline text-[0.6rem] ml-2"/>
+            </div>
           </div>
           
           <EventContainer eventList={ visibleEvents } skeletonCount={3}/>
@@ -221,7 +228,7 @@ export default function Home() {
         <div className="mt-4 sm:text-lg">
           <p>Wristband Playbook</p>
           <div className="max-w-[850px] mx-auto">
-            <Carousel items={ plays }/>
+            <Carousel items={ plays } compactOnShortScreen={ !!isShortScreen }/>
           </div>
         </div>
        

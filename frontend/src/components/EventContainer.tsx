@@ -11,14 +11,14 @@ type EventContainerProps = {
     skeletonCount: number;
 };
 
-export default function EventContainer({ eventList, skeletonCount }: EventContainerProps) {
+export function EventContainer({ eventList, skeletonCount }: EventContainerProps) {
 
     if (eventList === null) {
         return <EventSuspense count={ skeletonCount }/>
     };
                 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3  gap-4 justify-between rounded-[5px]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 p-1 gap-4 justify-between rounded-[5px]">
 
                 {eventList.map((event) => {
                     if (event.category === "practice") {

@@ -60,7 +60,7 @@ export function TournamentCard(tournament : TournamentProps) {
                     </div>
 
                     <div className={`text-[min(1rem,3vw)] overflow-visible flex items-center gap-2 ${ !tournament.deadline_passed ? "text-warning" : "" }`}>
-                        <DeadlineIcon className={`overflow-visible ${ !tournament.deadline_passed ? "text-warning" : "" } `}/>
+                        <DeadlineIcon className={`overflow-visible ${ !tournament.deadline_passed ? "text-warning animate-shake-repeat" : "" } `}/>
                         <span className="truncate">Register by { tournament.registrationDeadline }</span>
                     </div>
 

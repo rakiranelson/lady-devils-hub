@@ -8,10 +8,9 @@ export type PlayProps = {
     animation_url: string | null;
 };
 
-
-export function PlayCard(play : PlayProps) {  
+export function PlayCard({ compact = false, ...play }: PlayProps & { compact?: boolean }) {  
     return (
-        <div className="min-w-[180px] sm:min-w-[220px] md:min-w-[240px] max-w-[260px] [@media(min-width:53.125rem)_and_(max-height:43.9rem)]:h-34 aspect-[300/200] flex flex-col text-sm bg-foreground rounded-[18px] snap-start overflow-hidden relative group hover:cursor-pointer duration-300">
+        <div className={` min-w-[180px] sm:min-w-[220px] md:min-w-[240px] max-w-[260px] aspect-[300/200] ${ compact ? "h-34 w-auto" : "" } flex flex-col text-sm bg-foreground rounded-[18px] snap-start overflow-hidden relative group hover:cursor-pointer duration-300 `}>
 
             <div className="w-full h-full overflow-hidden absolute">
                 <Image
