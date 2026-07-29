@@ -56,6 +56,7 @@
   --shadow-button: inset -1px -1px 2px 0px rgb(255 255 255 / 0.1);
   --shadow-profile: inset 0px -1px 2px 0px rgb(255 255 255 / 0.08);
   --breakpoint-sidebar: 850px;
+  --breakpoint-large: 1175px;
 
   /* --radius-sm
   --radius-card (rounded-sm)

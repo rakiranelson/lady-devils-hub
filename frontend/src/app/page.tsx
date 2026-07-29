@@ -204,7 +204,7 @@ export default function Home() {
         : events.slice(0, 4);
 
   
-    const isShortScreen = useMediaQuery("(min-width: 53.125rem) and (max-height: 43.9rem)");
+    const isShortScreen = useMediaQuery("(min-width: 53.125rem) and (max-height: 43.95rem)");
   
   return (
     <div className="h-full flex flex-col">

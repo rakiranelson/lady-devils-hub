@@ -4,19 +4,20 @@ export type PlayProps = {
     id: number;
     playName: string;
     playNumber: number |null;
+    playType?: string;
     thumbnail_url: string;
     animation_url: string | null;
 };
 
-export function PlayCard({ compact = false, ...play }: PlayProps & { compact?: boolean }) {  
+export function PlayCard({ playStyling="", ...play }: PlayProps & { playStyling?: string }) {  
     return (
-        <div className={` min-w-[180px] sm:min-w-[220px] md:min-w-[240px] max-w-[260px] aspect-[300/200] ${ compact ? "h-34 w-auto" : "" } flex flex-col text-sm bg-foreground rounded-[18px] snap-start overflow-hidden relative group hover:cursor-pointer duration-300 `}>
+        <div className={` ${ playStyling } aspect-[300/200] flex flex-col text-sm bg-foreground rounded-[18px] overflow-hidden relative group hover:cursor-pointer duration-300 `}>
 
             <div className="w-full h-full overflow-hidden absolute">
                 <Image
                     className="object-cover object-[50%_50%] group-hover:scale-108 transition-transform duration-350"
                     src={ play.thumbnail_url }
-                    alt="Practice Banner"
+                    alt="Play Thumbnail"
                     fill={ true }
                     priority
                 />

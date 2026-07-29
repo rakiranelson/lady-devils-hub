@@ -66,7 +66,7 @@ export default function Carousel({ items, compactOnShortScreen = false }: Carous
             <div ref={carouselRef} onScroll={handleScroll} className="w-full overflow-x-auto snap-x snap-proximity scrollbar-none flex gap-4 p-2 scroll-px-2">
 
                 {items.map((item) => {
-                    return <PlayCard key={ item.id } { ...item } compact={compactOnShortScreen}/>
+                    return <PlayCard key={ item.id } { ...item } playStyling={` min-w-[180px] sm:min-w-[220px] md:min-w-[240px] max-w-[260px] snap-start ${ compactOnShortScreen ? "h-34 w-auto" : ""  }`} />
                 })}
                     
             </div>

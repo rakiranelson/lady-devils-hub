@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import EventToolBar from "./_components/EventToolBar";
 import { EventContainer, Event } from "@/components/EventContainer";
 import useScrollFade from "@/hooks/useScrollFade";
-import ScrollTop from "./_components/ScrollTop";
+import ScrollTop from "@/components/ScrollTop";
 
 export default function Events() {
 
