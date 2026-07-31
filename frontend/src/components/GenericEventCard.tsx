@@ -8,11 +8,12 @@ import TimeIcon from "@/assets/icons/time.svg";
 import LocationIcon from "@/assets/icons/location.svg";
 
 export type EventProps = {
-    id?: number;
-    eventName?: string;
+    id: number;
+    eventName: string;
     locationName?: string;
-    category?: string;
-    date?: string | null;
+    category: string;
+    dateLabel?: string | null;
+    endDate: Date;
     time?: string | null;
     response?: string | null;
 };
@@ -59,7 +60,7 @@ export function GenericEventCard(event : EventProps) {
 
                     <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
                         <CalendarIcon className="overflow-visible"/>
-                        <span className="truncate">{ event.date }</span>
+                        <span className="truncate">{ event.dateLabel }</span>
                     </div>
 
                     <div className="text-[min(1rem,3vw)] flex items-center gap-2">

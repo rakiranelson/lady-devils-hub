@@ -22,8 +22,8 @@ export default function PlayFilter({ activeFilter, setActiveFilter }: props) {
 
     useEffect(() => {
         const refMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
-            "Offense": opt1Ref,
-            "Defense": opt2Ref,
+            "offense": opt1Ref,
+            "defense": opt2Ref,
             // "Special Teams": opt3Ref,
         };
 
@@ -41,10 +41,10 @@ export default function PlayFilter({ activeFilter, setActiveFilter }: props) {
     
     return (
         <div className="bg-navigation h-10 gap-2 text-[1.1rem] font-medium rounded-[10px] inline-flex flex-none relative self-start">
-            <div ref={ opt1Ref } onClick={() => setActiveFilter("Offense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt1Ref } onClick={() => setActiveFilter("offense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Offense
             </div>
-            <div ref={ opt2Ref } onClick={() => setActiveFilter("Defense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt2Ref } onClick={() => setActiveFilter("defense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Defense
             </div>
             {/* <div ref={ opt3Ref } onClick={() => setActiveFilter("Special Teams")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>

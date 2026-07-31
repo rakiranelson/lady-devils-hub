@@ -8,11 +8,12 @@ import LocationIcon from "@/assets/icons/location.svg";
 import DeadlineIcon from "@/assets/icons/deadline.svg";
 
 export type TournamentProps = {
-    id?: number;
-    category?: string;
-    eventName?: string;
+    id: number;
+    category: string;
+    eventName: string;
     locationName?: string;
-    date?: string | null;
+    dateLabel?: string | null;
+    endDate: Date;
     time?: string | null;
     tournamentType?: string;
     response?: string | null;
@@ -51,7 +52,7 @@ export function TournamentCard(tournament : TournamentProps) {
 
                     <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
                         <CalendarIcon className="overflow-visible"/>
-                        <span className="truncate">{ tournament.date }</span>
+                        <span className="truncate">{ tournament.dateLabel }</span>
                     </div>
 
                     <div className="text-[min(1rem,3vw)] truncate flex items-center gap-2">

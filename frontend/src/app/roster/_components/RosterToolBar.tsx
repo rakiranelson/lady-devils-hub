@@ -1,6 +1,6 @@
 import SearchBar from "@/components/SearchBar";
 import SeasonFilter from "./SeasonFilter";
-import StatusPill from "@/components/StatusPill";
+import { StatusPill } from "@/components/StatusPill";
 
 type ToolBarProps = {
     selectedSeason: string;

@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  allowedDevOrigins: ["192.168.68.67"],
+  allowedDevOrigins: ["192.168.68.78"],
   /* config options here */
 
   turbopack: {

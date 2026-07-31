@@ -8,11 +8,12 @@ import TimeIcon from "@/assets/icons/time.svg";
 import LocationIcon from "@/assets/icons/location.svg";
 
 export type PracticeProps = {
-    id?: number;
-    category?: string;
-    eventName?: string;
+    id: number;
+    category: string;
+    eventName: string;
     locationName?: string;
-    date?: string | null;
+    dateLabel?: string | null;
+    endDate: Date;
     time?: string | null;
     practiceType?: string;
     response?: string | null;
@@ -47,7 +48,7 @@ export function PracticeCard(practice : PracticeProps) {
 
                         <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
                             <CalendarIcon className="overflow-visible"/>
-                            <span className="truncate">{ practice.date }</span>
+                            <span className="truncate">{ practice.dateLabel }</span>
                         </div>
 
                         <div className="text-[min(1rem,3vw)] flex items-center gap-2">

@@ -1,18 +1,37 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect } from "react";
 import { SemesterContext } from "@/contexts/SemesterContext";
 import Header from "@/components/Header";
 import RosterToolBar from "./_components/RosterToolBar";
+import { useRouter, useSearchParams } from "next/navigation";
 import { RosterTable } from "./_components/RosterTable";
 import useScrollFade from "@/hooks/useScrollFade";
+import { slugify, unslugify } from "@/lib/slug";
 
 
 export default function Roster() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const semester = useContext(SemesterContext)
 
-  const [selectedSeason, setSelectedSeason] = useState(semester)
+  const seasonSlug = searchParams.get("season");
+  const selectedSeason = seasonSlug ? unslugify(seasonSlug) : semester;
+
+  const setSelectedSeason = (season: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("season", slugify(season));
+    router.push(`?${ params.toString() }`)
+  };
+
+    useEffect(() => {
+    if (!searchParams.get("season")) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("season", slugify(semester));
+      router.replace(`?${ params.toString() }`);
+    }
+  }, [searchParams, router]);
 
   const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>();
   return (

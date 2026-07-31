@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 
 type props = {
-    upcoming: boolean;
-    setUpcoming: (upcoming: boolean) => void;
+    past: boolean;
+    setPast: (past: boolean) => void;
 };
 
-export default function UpcomingPast({upcoming, setUpcoming}: props) {
+export default function UpcomingPast({past, setPast}: props) {
 
     const upcomingRef = useRef<HTMLSpanElement>(null);
     const pastRef = useRef<HTMLSpanElement>(null);
@@ -18,7 +18,7 @@ export default function UpcomingPast({upcoming, setUpcoming}: props) {
                                                 }>({ left: 0, width: 0 })
 
     useEffect(() => {
-        const activeRef = upcoming ? upcomingRef : pastRef;
+        const activeRef = past ? pastRef : upcomingRef;
 
         if (activeRef.current) {
             setUnderlineStyle({
@@ -26,15 +26,15 @@ export default function UpcomingPast({upcoming, setUpcoming}: props) {
                 width: activeRef.current.offsetWidth,
             });
         }
-    }, [upcoming]);
+    }, [past]);
 
     return (
         <div className="relative flex gap-7 text-muted-1 text-xl font-medium">
-            <span ref={ upcomingRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ upcoming ? "text-foreground font-semibold" : ""} `} onClick={() => setUpcoming(true)}>
+            <span ref={ upcomingRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ !past ? "text-foreground font-semibold" : ""} `} onClick={() => setPast(false)}>
                 Upcoming
             </span>
 
-            <span ref={ pastRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ !upcoming ? "text-foreground font-semibold" : ""} `} onClick={() => setUpcoming(false)}>
+            <span ref={ pastRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ past ? "text-foreground font-semibold" : ""} `} onClick={() => setPast(true)}>
                 Past
             </span>
 

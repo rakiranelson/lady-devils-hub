@@ -24,10 +24,10 @@ export default function EventFilter({ activeFilter, setActiveFilter }: props) {
 
     useEffect(() => {
         const refMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
-            "All": opt1Ref,
-            "Practices": opt2Ref,
-            "Competitions": opt3Ref,
-            "Club Events": opt4Ref,
+            "all": opt1Ref,
+            "practices": opt2Ref,
+            "competitions": opt3Ref,
+            "club-events": opt4Ref,
         };
 
         const activeRef = refMap[activeFilter] ?? opt1Ref;
@@ -44,16 +44,16 @@ export default function EventFilter({ activeFilter, setActiveFilter }: props) {
     
     return (
         <div className="bg-navigation h-10 flex gap-2 text-[1.1rem] font-medium rounded-[10px] flex-none relative ">
-            <div ref={ opt1Ref } onClick={() => setActiveFilter("All")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt1Ref } onClick={() => setActiveFilter("all")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 All
             </div>
-            <div ref={ opt2Ref } onClick={() => setActiveFilter("Practices")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt2Ref } onClick={() => setActiveFilter("practices")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Practices
             </div>
-            <div ref={ opt3Ref } onClick={() => setActiveFilter("Competitions")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt3Ref } onClick={() => setActiveFilter("competitions")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Competitions
             </div>
-            <div ref={ opt4Ref } onClick={() => setActiveFilter("Club Events")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt4Ref } onClick={() => setActiveFilter("club-events")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Club Events
             </div>
 
