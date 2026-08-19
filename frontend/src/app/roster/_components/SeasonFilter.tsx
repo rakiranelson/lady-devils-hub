@@ -46,7 +46,7 @@ export default function SeasonFilter({ season, onChange, seasons }: FilterProps)
     return (
         <div ref={ containerRef } className="relative flex-none">
 
-            <div onClick={() => setIsOpen((prev) => !prev)} className="bg-muted-1 min-w-26 h-9 inline-flex items-center justify-center rounded-[8px] px-3 gap-2 group hover:cursor-pointer select-none">
+            <div onClick={() => setIsOpen((prev) => !prev)} className="bg-muted-1/80 min-w-26 h-9 inline-flex items-center justify-center rounded-[8px] px-3 gap-2 group hover:cursor-pointer select-none">
                 <span className="text-lg font-medium">{ season }</span>
                 <DropDownIcon className={` text-[0.75rem] text-foreground/75 group-hover:text-foreground ${ isOpen ? "rotate-180 mb-0.5" : "rotate-0" } transition-transform duration-200`}/>
             </div>

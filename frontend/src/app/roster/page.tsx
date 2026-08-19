@@ -41,7 +41,7 @@ export default function Roster() {
       <div className="w-full max-w-[1050px] mx-auto px-5 mb-2 pb-2 mt-1 scrollbar-gutter-auto flex flex-col flex-1 min-h-0 relative">
         <RosterToolBar selectedSeason={ selectedSeason } setSelectedSeason={ setSelectedSeason }/>
 
-        <div ref={ scrollContainer } onScroll={ handleScroll } className="overflow-auto h-full">
+        <div ref={ scrollContainer } onScroll={ handleScroll } className="overflow-auto h-full mb-5">
           <RosterTable season={ selectedSeason }/>
         </div>
 

@@ -10,7 +10,7 @@ export type PositionChipProps = {
 }
 export function PositionChip({ abbrev, full, color }: PositionChipProps) {
     return (
-        <div title={ full } className={`w-14 ${ color } rounded-[20px] flex justify-center px-1 font-medium hover:cursor-default `}>
+        <div title={ full } className={`w-14 ${ color } rounded-[20px] flex justify-center px-1 hover:cursor-default `}>
             { abbrev }
         </div>
     )

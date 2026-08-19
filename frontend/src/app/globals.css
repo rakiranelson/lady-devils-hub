@@ -11,7 +11,8 @@
   --background-invert: #ABA9D9;
   --foreground: #ffffff;
   --metadata: #9A6A2A;
-  --metadata-trans: #523E2D;
+  --roster-header: #292B43;
+  --metadata-trans: #504139; /* probably can remove this later */
   --success: #34C759;
   --warning: #FFCC00;
   --alert: #FF383C;
@@ -44,6 +45,7 @@
   --color-background-invert: var(--background-invert);
   --color-foreground: var(--foreground);
   --color-metadata: var(--metadata);
+  --color-roster-header: var(--roster-header);
   --color-metadata-trans: var(--metadata-trans);
   --color-success: var(--success);
   --color-warning: var(--warning);

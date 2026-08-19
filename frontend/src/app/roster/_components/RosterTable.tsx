@@ -118,7 +118,7 @@ export function RosterTable({ season }: RosterTableProps) {
 
         <div className="mt-1 grid grid-cols-[90px_minmax(max-content,3fr)_minmax(max-content,2fr)_135px] gap-x-1 relative [&>*:last-child>*:first-child]:rounded-bl-[10px] [&>*:last-child>*:last-child]:rounded-br-[10px] [&>*:last-child>*]:border-b-0" >
 
-            <div className="sticky top-0 z-5 bg-background col-start-1 col-end-[-1] row-start-1"></div>
+            <div className="sticky top-0 z-5 bg-background col-start-1 col-end-[-1] row-start-1"/>
             
             <>
                 <div className="bg-metadata-trans min-h-13 p-2 px-3 flex items-end text-lg font-semibold rounded-tl-[10px] sticky top-0 z-10 select-none row-start-1 col-start-1">Jersey #</div>
