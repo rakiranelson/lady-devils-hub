@@ -31,7 +31,7 @@ export default function MobileSidebar() {
             )}
 
             <div className={` sidebar:hidden flex flex-col fixed h-screen z-200 bg-navigation items-center w-[192px] font-body shadow-sidebar transition-transform ${mobile.isOpen === true ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="mt-2 flex flex-col w-full">
+                <div className="mt-2 flex flex-col w-full select-none">
                     <button className="sidebar:hidden mr-2 hover:bg-black/20 group pl-1 pb-1 hover:cursor-pointer ml-auto transition-all duration-100" onClick={mobile.closeSidebar}>
                         <CrossIcon className="text-foreground/20 mt-1 mr-1 group-hover:text-foreground/40"/>
                     </button>

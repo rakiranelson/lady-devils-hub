@@ -14,9 +14,11 @@ export default function Events() {
   const searchParams = useSearchParams();
 
   const semester = useContext(SemesterContext);
+  const [past, setPast] = useState(searchParams.get("past") === "true");
+  const [activeFilter, setActiveFilter] = useState(searchParams.get("type")?.toLowerCase() ?? "all");
 
-  const past = searchParams.get("past") === "true";
-  const setPast = (past: boolean) => {
+  const handlePastChange = (past: boolean) => {
+    setPast(past);
     const params = new URLSearchParams(searchParams.toString());
     if (past === false) {
       params.delete("past");
@@ -26,8 +28,8 @@ export default function Events() {
     router.push(`?${ params.toString() }`)
   };
 
-  const activeFilter = searchParams.get("type")?.toLowerCase() ?? "all";
-  const setActiveFilter = (filter: string) => {
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
     const params = new URLSearchParams(searchParams.toString());
     if (filter === "all") {
       params.delete("type");
@@ -157,7 +159,7 @@ export default function Events() {
   
   const filteredEvents = useMemo(() => {
     const now = new Date();
-    const categories = filterCategories[activeFilter] ?? [];
+    const categories = filterCategories[activeFilter];
 
     return events.filter((event) => {
       const matchesCategory = activeFilter === "all" || categories.includes(event.category);
@@ -175,7 +177,7 @@ export default function Events() {
       <Header title="Events" semester={ semester }/>
       
       <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 mb-2 pb-2 scrollbar-gutter-auto flex flex-col flex-1 min-h-0 relative">
-        <EventToolBar past={ past } setPast={ setPast } activeFilter={ activeFilter } setActiveFilter={ setActiveFilter } eventCount={ eventCount }/>
+        <EventToolBar past={ past } setPast={ handlePastChange } activeFilter={ activeFilter } setActiveFilter={ handleFilterChange } eventCount={ eventCount }/>
 
         <div ref={ scrollContainer } onScroll={ handleScroll } className="overflow-y-auto h-full">
           <EventContainer eventList={ filteredEvents } skeletonCount={6}/>

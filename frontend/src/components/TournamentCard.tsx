@@ -23,12 +23,32 @@ export type TournamentProps = {
 
 };
 
+export type ExtendedTournamentProps = {
+    id: number;
+    category: string;
+    eventName: string;
+    locationName?: string;
+    locationAddress?: string;
+    dateLabel?: string | null;
+    time?: string | null;
+    tournamentType?: string;
+    response?: string | null;
+    registered?: boolean;
+    registrationDeadline?: string;
+    deadline_passed?: boolean;
+
+    details: string;
+    // registeredPlayers?: {
+    //     count: number;
+    //     people: string[];
+    // }
+};
 
 export function TournamentCard(tournament : TournamentProps) {
     return (
         <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200">
         
-                    <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative">
+                    <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative select-none">
                         <Image
                             className="object-cover object-[50%_40%] opacity-40"
                             src="/tournaments.jpg"
@@ -69,7 +89,7 @@ export function TournamentCard(tournament : TournamentProps) {
                         <Button title="Register"></Button>
 
                         <div className="flex items-center h-[28px]">
-                            <MoreDetails title="More Details" href="/"  color="muted-2"></MoreDetails>
+                            <MoreDetails title="Details" href="/"  color="muted-2"></MoreDetails>
                         </div>
                     </div>
 
@@ -80,7 +100,7 @@ export function TournamentCard(tournament : TournamentProps) {
     );
 };
 
-export function PracticeDetails(tournament : TournamentProps) {
+export function TournamentDetails(tournament : TournamentProps) {
     return (
         <div className="w-full flex gap-2">
 

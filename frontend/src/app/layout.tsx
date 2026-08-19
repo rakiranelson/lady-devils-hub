@@ -4,6 +4,8 @@ import "./globals.css";
 import AppLayout from "@/app/AppLayout"
 import SemesterProvider from "@/contexts/SemesterContext"
 import SidebarContentProvider from "@/contexts/SidebarContext";
+import CurrentUserProvider from "@/contexts/CurrentUserContext";
+import ModalProvider from "@/contexts/ModalContext";
 
 const plusJakartaSans  = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -23,9 +25,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children, modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
 
   return (
@@ -33,15 +36,19 @@ export default function RootLayout({
       lang="en"
       className={`${plusJakartaSans.variable} ${rajdhani.variable} h-full antialiased`}
     >
-      <SemesterProvider>
-        <SidebarContentProvider>
-          <body className="h-screen flex scrollbar-thumb-muted-2 scrollbar-track-transparent overflow-hidden">
-            <AppLayout>
-              {children}
-            </AppLayout>
-          </body>
-        </SidebarContentProvider>
-      </SemesterProvider>
+      <CurrentUserProvider>
+        <ModalProvider>
+          <SemesterProvider>
+          <SidebarContentProvider>
+            <body className="h-screen flex scrollbar-thumb-muted-2 scrollbar-track-transparent overflow-hidden">
+              <AppLayout modal={modal}>
+                {children}
+              </AppLayout>
+            </body>
+          </SidebarContentProvider>
+        </SemesterProvider>
+        </ModalProvider>
+      </CurrentUserProvider>
     </html>
   );
 }

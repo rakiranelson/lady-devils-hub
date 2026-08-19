@@ -18,10 +18,23 @@ export type EventProps = {
     response?: string | null;
 };
 
+// types for event details card
+export type ExtendedEventProps = {
+    id: number;
+    category: string;
+    eventName: string;
+    locationName?: string;
+    locationAddress?: string;
+    dateLabel?: string | null;
+    time?: string | null;
+    response?: string | null;
+
+    details: string;
+};
 
 export function GenericEventCard(event : EventProps) {
     return (
-        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200">
+        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200 select-none">
         
                     <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative">
 
@@ -77,7 +90,7 @@ export function GenericEventCard(event : EventProps) {
                         <Button></Button>
 
                         <div className="flex items-center h-[28px]">
-                            <MoreDetails title="More Details" href="/" color="muted-2"></MoreDetails>
+                            <MoreDetails title="Details" href="/" color="muted-2"></MoreDetails>
                         </div>
                     </div>
 

@@ -61,9 +61,9 @@ const mobileContextInit = {
 export const MobileSidebarContext = createContext<MobileSidebarInfo>(mobileContextInit);
 
 export default function SidebarContentProvider(
-    { children }: { children: React.ReactNode }) {
+{ children }: { children: React.ReactNode }) {
 
-        const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <SidebarContext.Provider value={user}>

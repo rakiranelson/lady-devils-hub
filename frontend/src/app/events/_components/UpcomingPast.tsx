@@ -38,9 +38,7 @@ export default function UpcomingPast({past, setPast}: props) {
                 Past
             </span>
 
-            <div className="absolute -bottom-2 h-[3px] bg-foreground transition-all duration-200" style={{ left: underlineStyle.left, width: underlineStyle.width }}>
-
-            </div>
+            <div className="absolute -bottom-2 h-[3px] bg-foreground transition-all duration-200" style={{ left: underlineStyle.left, width: underlineStyle.width }}/>
         </div>
     )
 };

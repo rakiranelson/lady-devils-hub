@@ -55,8 +55,12 @@
   --shadow-sidebar: 2px 0px 10px 0px rgb(0 0 0 / 0.1);
   --shadow-button: inset -1px -1px 2px 0px rgb(255 255 255 / 0.1);
   --shadow-profile: inset 0px -1px 2px 0px rgb(255 255 255 / 0.08);
+  --shadow-small-card: 3px 3px 6px 0px rgb(0 0 0 / 0.25);
+  --shadow-rsvp-table: 3px 3px 6px 0px rgb(0 0 0 / 0.15), -3px 3px 6px 0px rgb(0 0 0 / 0.15);
+  --shadow-large-card: 3px 3px 50px 0px rgb(0 0 0 / 0.5);
   --breakpoint-sidebar: 850px;
   --breakpoint-large: 1175px;
+  --breakpoint-rsvp-table: 720px;
 
   /* --radius-sm
   --radius-card (rounded-sm)
@@ -96,6 +100,14 @@
     94% { transform: rotate(-3deg); }
     97% { transform: rotate(2deg); }
   };
+
+  --animate-grow: grow 0.1s ease-in-out 1;
+  @keyframes grow {
+    0% { transform: scale(0.5); }
+    90% { transform: scale(1.01); }
+    100% { transform: scale(1); }
+  };
+
   
 }
 
