@@ -68,9 +68,9 @@ export default function Home() {
       time: null,
       response: null,
       tournamentType: "Regional",
-      registered: false,
+      isRegistered: false,
       registrationDeadline: "9/1 @ 12:00pm",
-      deadline_passed: false
+      deadlinePassed: false
     },
 
     {

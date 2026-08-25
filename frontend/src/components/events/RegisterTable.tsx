@@ -6,17 +6,16 @@ import { StatusPill } from "../StatusPill";
 import useScrollFade from "@/hooks/useScrollFade";
 
 type props = {
-    rsvp: responses
+    responses: responses
 };
 
-export default function RVSPTable({ rsvp }: props) {
+export default function RegisterTable({ responses }: props) {
 
-    const [activeTab, setActiveTab] = useState("attending");
+    const [activeTab, setActiveTab] = useState("registered");
 
-    const attendingRef = useRef<HTMLSpanElement>(null);
-    const maybeRef = useRef<HTMLSpanElement>(null);
-    const noRef = useRef<HTMLSpanElement>(null);
-    const pendingRef = useRef<HTMLSpanElement>(null);
+    const registeredRef = useRef<HTMLSpanElement>(null);
+    const notRegisteredRef = useRef<HTMLSpanElement>(null);
+    const noResponseRef = useRef<HTMLSpanElement>(null);
 
     const [underlineStyle, setUnderlineStyle] = useState<{
                                                     left: number | undefined,
@@ -26,13 +25,12 @@ export default function RVSPTable({ rsvp }: props) {
                                                 
     useEffect(() => {
         const refMap: Record<string, React.RefObject<HTMLSpanElement | null>>  = {
-            "attending": attendingRef,
-            "maybe": maybeRef,
-            "no": noRef,
-            "pending": pendingRef,
+            "registered": registeredRef,
+            "not registered": notRegisteredRef,
+            "no response": noResponseRef,
         };
 
-        const activeRef = refMap[activeTab] ?? attendingRef;
+        const activeRef = refMap[activeTab] ?? registeredRef;
 
         if (activeRef.current) {
             setUnderlineStyle({
@@ -47,24 +45,21 @@ export default function RVSPTable({ rsvp }: props) {
     return (
         <div className="w-full flex flex-col relative">
             <div className="p-3 border-b border-muted-1/50">
-                <div className={` relative flex gap-7 text-foreground/35 text-[min(1.1rem,2.9vw)] font-medium px-2 ${ "no" in rsvp ? "justify-between" : "gap-10"}`}>
-                    <span ref={ attendingRef } className={` hover:cursor-pointer transition-colors duration-400 select-none ${ activeTab === "attending" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("attending")}>
-                        {`Attending`}
+                <div className={` relative flex gap-7 text-foreground/35 text-[min(1.1rem,2.9vw)] font-medium px-2 ${ "notRegistered" in responses ? "justify-between" : "gap-10"}`}>
+                    <span ref={ registeredRef } className={` hover:cursor-pointer transition-colors duration-400 select-none ${ activeTab === "registered" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("registered")}>
+                        {`Registered`}
                     </span>
 
-                    <span ref={ maybeRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ activeTab === "maybe" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("maybe")}>
-                        {`Maybe`}
+                    { "notRegistered" in responses && (
+                        <span ref={ notRegisteredRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ activeTab === "not registered" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("not registered")}>
+                        {`Not Attending`}
                     </span>
-
-                    { "no" in rsvp && (
-                        <span ref={ noRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ activeTab === "no" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("no")}>
-                            {`No`}
-                        </span>
                     )}
+                    
 
-                    { "pending" in rsvp && (
-                        <span ref={ pendingRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ activeTab === "pending" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("pending")}>
-                            {`Pending`}
+                    { "noResponse" in responses && (
+                        <span ref={ noResponseRef } className={` hover:cursor-pointer transition-colors duration-500 select-none ${ activeTab === "no response" ? "text-foreground font-semibold" : ""} `} onClick={() => setActiveTab("no response")}>
+                            {`No Response`}
                         </span>
                     )}
                             
@@ -73,10 +68,10 @@ export default function RVSPTable({ rsvp }: props) {
                 </div>
 
             <div ref={ scrollContainer } onScroll={ handleScroll } className="text-[min(1rem,3vw)] py-3 px-5 overflow-y-auto">
-                { activeTab === "attending" && (
+                { activeTab === "registered" && (
                     <div className="flex justify-between">
                         <div className="flex flex-col tracking-wider leading-[2.4rem] text-foreground/70 font-medium">
-                        { rsvp.yes?.map((player) => (
+                        { responses.registered?.map((player) => (
                             <div key={ player.id }>
                                 { player.name }
                             </div>
@@ -84,15 +79,15 @@ export default function RVSPTable({ rsvp }: props) {
                         </div>
                     
                         <div className="flex-none">
-                            <StatusPill display={ rsvp.yes?.length + ` Players` }/>
+                            <StatusPill display={ responses.registered?.length + ` Players` }/>
                         </div>
                     </div>
                 )}
 
-                { activeTab === "maybe" && (
+                { activeTab === "not registered" && "notRegistered" in responses && (
                     <div className="flex justify-between">
                         <div className="flex flex-col text-base tracking-wider leading-[2.4rem] text-foreground/70 font-medium">
-                        { rsvp.maybe?.map((player) => (
+                        { responses.notRegistered?.map((player) => (
                             <div key={ player.id }>
                                 { player.name }
                             </div>
@@ -100,15 +95,15 @@ export default function RVSPTable({ rsvp }: props) {
                         </div>
                     
                         <div className="flex-none">
-                            <StatusPill display={ rsvp.maybe?.length + ` Players` }/>
+                            <StatusPill display={ responses.notRegistered?.length + ` Players` }/>
                         </div>
                     </div>
                 )}
 
-                { activeTab === "no" && "no" in rsvp && (
+                { activeTab === "no response" && "noResponse" in responses && (
                     <div className="flex justify-between">
                         <div className="flex flex-col text-base tracking-wider leading-[2.4rem] text-foreground/70 font-medium">
-                        { rsvp.no?.map((player) => (
+                        { responses.noResponse?.map((player) => (
                             <div key={ player.id }>
                                 { player.name }
                             </div>
@@ -116,23 +111,7 @@ export default function RVSPTable({ rsvp }: props) {
                         </div>
                     
                         <div className="flex-none">
-                            <StatusPill display={ rsvp.no?.length + ` Players` }/>
-                        </div>
-                    </div>
-                )}
-
-                { activeTab === "pending" && "pending" in rsvp && (
-                    <div className="flex justify-between">
-                        <div className="flex flex-col text-base tracking-wider leading-[2.4rem] text-foreground/70 font-medium">
-                        { rsvp.pending?.map((player) => (
-                            <div key={ player.id }>
-                                { player.name }
-                            </div>
-                        ))}
-                        </div>
-                    
-                        <div className="flex-none">
-                            <StatusPill display={ rsvp.pending?.length + ` Players` }/>
+                            <StatusPill display={ responses.noResponse?.length + ` Players` }/>
                         </div>
                     </div>
                 )}

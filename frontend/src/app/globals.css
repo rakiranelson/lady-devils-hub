@@ -8,7 +8,7 @@
   --muted-1: #52567A;
   --muted-1-light: #7C80A7;
   --muted-2: #8F90A7;
-  --background-invert: #ABA9D9;
+  --primary-light: #ABA9D9;
   --foreground: #ffffff;
   --metadata: #9A6A2A;
   --roster-header: #292B43;
@@ -42,7 +42,7 @@
   --color-muted-1: var(--muted-1);
   --color-muted-1-light: var(--muted-1-light);
   --color-muted-2: var(--muted-2);
-  --color-background-invert: var(--background-invert);
+  --color-primary-light: var(--primary-light);
   --color-foreground: var(--foreground);
   --color-metadata: var(--metadata);
   --color-roster-header: var(--roster-header);

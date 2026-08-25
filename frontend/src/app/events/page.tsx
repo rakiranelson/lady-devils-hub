@@ -59,12 +59,12 @@ export default function Events() {
       locationName: "Charlottesville, VA",
       dateLabel: "Saturday Sep 05 - Sunday Sep 06",
       endDate: new Date(2026, 8, 6, 23, 59),
-      time: null,
-      response: null,
+      time: "",
+      response: "no",
       tournamentType: "Regional",
-      registered: false,
+      isRegistered: false,
       registrationDeadline: "9/1 @ 12:00pm",
-      deadline_passed: false
+      deadlinePassed: false
     },
 
     {
@@ -87,7 +87,7 @@ export default function Events() {
       endDate: new Date(2026, 8, 8, 19),
       time: "5:00-7:00pm",
       practiceType: "Conditioning",
-      response: "yes"
+      response: "maybe"
     },
 
     {
@@ -99,7 +99,7 @@ export default function Events() {
       endDate: new Date(2026, 8, 10, 19),
       time: "5:00-7:00pm",
       practiceType: "Regular",
-      response: "yes"
+      response: "no"
     },
 
     {
@@ -110,18 +110,18 @@ export default function Events() {
       dateLabel: "Saturday Sep 12",
       endDate: new Date(2026, 8, 12, 14),
       time: "12:00-2:00pm",
-      response: null,
+      response: "yes",
     },
 
     {
       id: 7,
       eventName: "Wine Night",
-      locationName: "Blue Light Apt 427",
+      locationName: "Blue Light Apt 407",
       category: "other",
       dateLabel: "Friday Sep 11",
       endDate: new Date(2026, 8, 11, 18),
       time: "6:00pm",
-      response: "yes"
+      response: null
     },
 
     {
@@ -133,7 +133,7 @@ export default function Events() {
       endDate: new Date(2026, 6, 21, 19),
       time: "5:00-7:00pm",
       practiceType: "Conditioning",
-      response: "yes"
+      response: "no"
     },
     {
       id: 9,

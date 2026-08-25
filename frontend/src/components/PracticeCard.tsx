@@ -3,31 +3,34 @@
 import { useContext, useRef, useState} from "react";
 import { SemesterContext } from "@/contexts/SemesterContext";
 import { UserContext } from "@/contexts/CurrentUserContext";
+import { ModalContext } from "@/contexts/ModalContext";
+
 import Button from "@/components/Button"
 import MoreDetails from "@/components/MoreDetails";
 import Image from "next/image";
 import InfoCard from "./events/InfoCard";
 import DetailsContainer from "./events/DetailsContainer";
+import GoBack from "./events/GoBack";
 
 // icons
 import CalendarIcon from "@/assets/icons/calendar.svg";
 import TimeIcon from "@/assets/icons/time.svg";
 import LocationIcon from "@/assets/icons/location.svg";
-import GoBack from "./events/GoBack";
+
+
 import { RVSPList } from "./events/RSVPList";
-import { RSVPChip } from "./events/RSVPChip";
-import { ModalContext } from "@/contexts/ModalContext";
+import RSVPChip from "./events/RSVPChip";
 
 export type PracticeProps = {
     id: number;
     category: string;
     eventName: string;
-    locationName?: string;
-    dateLabel?: string | null;
+    locationName: string;
+    dateLabel: string;
     endDate: Date;
-    time?: string | null;
-    practiceType?: string;
-    response?: string | null;
+    time: string;
+    practiceType: string;
+    response: string | null;
 
 };
 
@@ -36,12 +39,12 @@ export type ExtendedPracticeProps = {
     id: number;
     category: string;
     eventName: string;
-    locationName?: string;
-    locationAddress?: string;
-    dateLabel?: string;
-    time?: string;
-    practiceType?: string;
-    response?: string | null;
+    locationName: string;
+    locationAddress: string;
+    dateLabel: string;
+    time: string;
+    practiceType: string;
+    response: string | null;
     details: string;
 };
 
@@ -88,7 +91,7 @@ export function PracticeCard(practice : PracticeProps) {
 
                         <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.5vw)]">
                             { (practice.response === "yes" || practice.response === "maybe" || practice.response === "no") ?
-                                ( <RSVPChip response={ practice.response } hiddenEdit={false}/> ) : 
+                                ( <RSVPChip response={ practice.response } hiddenEdit={true}/> ) : 
                                 ( <Button title="RSVP Now"/> )
                             }
 
@@ -119,7 +122,7 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
             setFrozenHeight(detailsWrapperRef.current.offsetHeight);
         }
         if (scrollContainer.current) {
-            setRSVPHeight(scrollContainer.current.offsetHeight - 45);
+            setRSVPHeight(scrollContainer.current.offsetHeight - (window.innerWidth >= 640 ? 50 : 45));
 
         }
     };
@@ -131,8 +134,7 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
     const scrollContainer = useRef<HTMLDivElement>(null);
 
     return (
-        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`}
-     style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
+        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
             <div className="w-full h-1/8 rounded-t-[18px] overflow-hidden relative select-none">
                 <Image
                     className="object-cover object-[30%_60%] opacity-40"
@@ -175,7 +177,7 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
                             />
                         </div>
                         
-                        <div ref={ detailsWrapperRef } className={` ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
+                        <div ref={ detailsWrapperRef } className={` mt-1 ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
                             <DetailsContainer content={ practice.details }/>
                         </div>
 
