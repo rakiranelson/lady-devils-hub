@@ -35,7 +35,7 @@ const user = {
     },
     navItems: [
       { label: "Admin Settings", href: "/admin"},
-      { label: "Team Logistics", href: "/logistics"},
+      { label: "Exec Tools", href: "/executive-tools"},
       { label: "Events", href: "/events"},
       { label: "Playbook", href: "/playbook"},
       { label: "Roster", href: "/roster"},

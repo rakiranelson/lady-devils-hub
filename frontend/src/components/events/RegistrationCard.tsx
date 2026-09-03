@@ -26,7 +26,7 @@ export default function RegistrationCard({ response, registrationDeadline, deadl
     };
 
     return (
-        <div className="self-start flex flex-col bg-muted-1/30 border-2 border-muted-1/45 rounded-[5px] shadow-small-card items-center text-base w-[275px] flex-none">
+        <div className="self-start flex flex-col bg-muted-1/30 border-2 border-muted-1/45 rounded-[5px] shadow-small-card items-center text-base w-[280px] flex-none">
 
             <div className="border-b-2 border-muted-1/75 py-2 px-4 w-full flex justify-center">
                 My Registration

@@ -65,7 +65,7 @@ export default function Home() {
       locationName: "Charlottesville, VA",
       dateLabel: "Saturday Sep 05 - Sunday Sep 06",
       endDate: new Date(2026, 8, 6, 23, 59),
-      time: null,
+      time: "",
       response: null,
       tournamentType: "Regional",
       isRegistered: false,
