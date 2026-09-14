@@ -28,14 +28,14 @@ export default function SearchBar({ onSearch, placeholder }: SearchBarProps) {
     };
 
     return (
-        <div className="bg-background-invert/15 hover:bg-background-invert/20 flex-1 min-w-[200px] max-w-[400px] h-10 inline-flex items-center rounded-[30px] px-3 gap-2 ring-2 ring-transparent focus-within:ring-primary focus-within:!bg-background-invert/15 transition-shadow">
-            <SearchIcon className="text-muted-2/80 mb-0.5 text-[1.3rem]"/>
+        <div className="bg-primary-light/15 hover:bg-primary-light/18 flex-1 min-w-[200px] max-w-[400px] h-10 inline-flex items-center rounded-[30px] px-3 gap-2 outline-2 outline-transparent focus-within:outline-primary focus-within:!bg-primary-light/15 transition-all">
+            <SearchIcon className="text-foreground/20 mb-0.5 text-[1.3rem]"/>
             <input 
                 value={ inputValue }
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={ handleEnter }
                 placeholder={ placeholder }
-                className="placeholder:text-muted-2 font-medium outline-none flex-1 bg-transparent text-lg"
+                className="placeholder:text-foreground/15 font-medium outline-none flex-1 bg-transparent text-lg"
             />
         </div>
     )

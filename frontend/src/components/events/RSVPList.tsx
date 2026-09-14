@@ -101,7 +101,7 @@ export function RVSPList({ label, handleRSVPOpen, handleRSVPClose, pageScrollRef
                     { isTournament ? 
                      (
                         <div 
-                            className="flex mx-auto bg-muted-1/20 border-1 border-muted-1/70 w-full rsvp-table:w-3/4 rounded-[8px] scrollbar-thin shadow-rsvp-table overflow-hidden"
+                            className="flex mx-auto bg-muted-1/20 border-1 border-muted-1/70 w-full rsvp-table:w-3/4 rounded-[8px] scrollbar-thin shadow-both-sides overflow-hidden"
                             style={{ height: maxHeight ?? 500 }}>
                             
                             <RVSPTable rsvp={ rsvp }/>
@@ -111,7 +111,7 @@ export function RVSPList({ label, handleRSVPOpen, handleRSVPClose, pageScrollRef
 
                      (
                         <div 
-                            className="flex mx-auto bg-muted-1/20 border-1 border-muted-1/70 w-full rsvp-table:w-3/4 rounded-[8px] scrollbar-thin shadow-rsvp-table overflow-hidden"
+                            className="flex mx-auto bg-muted-1/20 border-1 border-muted-1/70 w-full rsvp-table:w-3/4 rounded-[8px] scrollbar-thin shadow-both-sides overflow-hidden"
                             style={{ height: maxHeight ?? 500 }}>
                             
                             <RegisterTable responses={ rsvp }/>

@@ -20,24 +20,28 @@ export default function ManagementContainer() {
                     name="Event"
                     description="Create and schedule practices, tournaments, solo games, and other club events."
                     management={true}
+                    actionHref="/executive-tools/create-event"
                 />
                 <ToolCard 
                     icon={ <AnnouncementIcon className="text-foreground text-[2.25rem]" strokeWidth={13}/>}
                     name="Announcement"
                     description="Create and post important updates, reminders, and information."
                     management={true}
+                    actionHref="/"
                 />
                 <ToolCard 
                     icon={ <PollIcon className="text-foreground text-[2.25rem]" strokeWidth={4}/>}
                     name="Poll"
                     description="Collect team input to help determine event details and other decisions."
                     management={true}
+                    actionHref="/"
                 />
                 <ToolCard 
                     icon={ <LoopIcon className="text-foreground text-[2.25rem]" strokeWidth={4}/>}
                     name="Practice Generator"
                     description="Quickly create events for recurring practices for the season."
                     management={true}
+                    actionHref="/"
                 />
 
             </div>
