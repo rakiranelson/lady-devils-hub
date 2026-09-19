@@ -1,27 +1,45 @@
 "use client";
 
 import { useState, useLayoutEffect } from "react";
-import FormField from "@/components/events/FormField";
-import Button from "@/components/Button";
-import FormMultiSelect from "@/components/events/FormMultiSelect";
+import { useRouter } from "next/navigation";
+import FormCard from "./FormCard";
+import FormField from "@/app/executive-tools/_components/FormField";
+import FormMultiSelect from "@/app/executive-tools/_components/FormMultiSelect";
+import FormSingleSelect from "./FormSingleSelect";
+import NoticeIcon from "@/assets/icons/notice.svg";
+import SelectCheckIcon from "@/assets/icons/selectCheck.svg";
 
 export default function CreateEventCard() {
     const [page, setPage] = useState(1);
+    const [prevPage, setPrevPage] = useState(0);
+    const [autoOpenRSVP, setAutoOpenRSVP] = useState(true);
+    const router = useRouter();
 
     // onclick needs to set state and render the correct parts of the form by submitting to backend and getting a specialized state
 
-    const fetchNextPage = 2;
     const isTournament = true;
+    const isTentative = false;
+
+    const handleNext = () => {
+        setPrevPage(page)
+        setPage(page + 1); 
+    };
+
+    const handleBack = () => {
+        setPage(prevPage)
+        setPrevPage(prevPage - 1)
+    };
+
+    const handleCancel = () => {
+        router.back();
+        // get rid of temp event id
+    };
 
     return (
-        <div className="aspect-[6/7] h-[650px] bg-navigation rounded-[10px] shadow-both-sides flex flex-col">
-            <div className="bg-background/45 font-semibold text-2xl py-[10px] flex justify-center">
-                Create Event
-            </div>
-
+        <FormCard cardTitle="Create Event">
             { page === 1 && (
-                <div className="flex-1 flex flex-col mx-10 py-5">
-                    <div className="flex flex-col gap-3 pb-5 border-b-1 border-muted-1/30">
+              <>
+                <div className="flex flex-col gap-3 pb-5 border-b-1 border-muted-1/30">
                         <FormField 
                             formName="Event Name" 
                             placeholder="e.g. NCCU Scrimmage" 
@@ -46,11 +64,11 @@ export default function CreateEventCard() {
                                 />
                             </div>
                         </div>
-                        <FormField 
+                        <FormSingleSelect 
                             formName="Category" 
-                            placeholder="" 
+                     
                             required={true}
-                            width={150}
+                            // width={150}
                         />
                     </div>
 
@@ -67,25 +85,23 @@ export default function CreateEventCard() {
                         />
                     </div>
 
-                    <div className="mt-auto mb-1 flex gap-5 items-center text-lg">
-                        <button onClick={ () => setPage(fetchNextPage) } className={`flex-1 font-semibold rounded-[3.5px] p-[6px] bg-muted-1 hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>Next</button>
-                        <button className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
+                    <div className="mt-auto mb-1 flex gap-5 items-center text-lg select-none">
+                        <button onClick={ handleNext } className={`flex-1 font-semibold rounded-[3.5px] p-[6px] bg-muted-1 hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>Next</button>
+                        <button onClick={ handleCancel } className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
                     </div>
-                    
-                </div>    
+              </>
             )}
 
             { page === 2 && (
-                <div className="flex-1 flex flex-col mx-10 py-5">
-                    <div className="flex flex-col gap-4 pb-5 border-b-1 border-muted-1/30 h-[375px]">
+                <>
+                    <div className="flex flex-col gap-4 pb-5 border-b-1 border-muted-1/30 flex-1">
                         <div className="flex flex-col flex-1" >
                             <FormField 
                                 formName="Event Details" 
                                 placeholder="e.g. Please bring cleats and/or gloves if you have them." 
                                 multiline={true}
                             />
-                        </div>
-                        
+                        </div> 
                         
                         { isTournament && (
                             <div>
@@ -95,21 +111,53 @@ export default function CreateEventCard() {
                         )}
                     </div>
 
-                    <div className="flex flex-col gap-3 mt-4 py-3">
+                    <div className="flex flex-col gap-3 py-3 mb-10">
+
+                        { isTentative ?
+                            <div className="bg-metadata/30 mt-2 rounded-[5px] flex items-center py-3 px-4 gap-x-5">
+                        
+                                <NoticeIcon className="text-[2.25rem] flex-none"/>
+                                <span className="text-foreground/60 text-sm leading-snug">
+                                    This event is missing a <span className="font-semibold underline">date</span> and/or <span className="font-semibold underline">location</span>. It will be saved as a <span className="font-semibold underline">tentative event</span> until the remaining details are added.
+                                </span>
+                            </div>
+                            :
+                            <div className="flex flex-col gap-2 text-foreground/60">
+                                <div>
+                                    <span className="text-foreground/75 font-semibold">Note</span>
+                                    <span className="text-metadata font-bold ml-1">*</span>
+                                </div>
+                                <div className="text-sm leading-snug">
+                                    This event will be saved as <span className="font-semibold underline">scheduled</span> and RSVP will automatically open for users. To keep RSVP closed until later, uncheck the option below.
+                                </div>
+                                <div onClick={ () => setAutoOpenRSVP(prev => !prev) } className="flex items-center gap-2 w-fit group hover:cursor-pointer ">
+                                    <div className="w-[15px] h-[15px] outline-1 outline-muted-1 flex items-center justify-center group-hover:outline-primary">
+                                        {autoOpenRSVP && <SelectCheckIcon className="text-[0.5rem] text-foreground"/>}
+                                    </div>
+                                    <div className={`text-[0.825rem] select-none ${ autoOpenRSVP ? "text-foreground" : "text-foreground/50 line-through" }`}>
+                                        Automatically open RSVP
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        }  
                         
                     </div>
 
-                    <div className="mt-auto mb-1 flex gap-5 items-center text-lg">
-                        <button onClick={ () => setPage(fetchNextPage) } className={`flex-1 font-semibold rounded-[3.5px] p-[6px] bg-muted-1 hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>Next</button>
-                        <button className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
+                    <div className="mt-auto mb-1 flex gap-5 items-center text-lg select-none">
+                        <button onClick={ handleBack } className={`flex-[1] font-semibold rounded-[3.5px] p-[6px] bg-muted-1 hover:bg-muted-1/60 hover:shadow-button hover:cursor-pointer transition-all`}>Back</button>
+
+                        <button className={`flex-[2] font-semibold rounded-[3.5px] p-[6px] bg-primary hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>{ `Save as ${ isTentative ? "Tentative" : "Scheduled"} `}</button>
+
+                        <button onClick={ handleCancel } className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
                     </div>
-                    
-                </div>    
+                </>       
             )}
+        </FormCard>
 
             
-            
 
-        </div>
+            
     )
 };

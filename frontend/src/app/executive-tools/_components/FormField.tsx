@@ -18,7 +18,7 @@ export default function FormField({ formName, placeholder, required = false, wid
     return (
         <div className="flex flex-col h-full">
             <div className="font-medium text-foreground/75">
-                <span className={` ${ formName ? "" : "invisible"} `}>{ formName ? formName : "invisible" }</span>
+                <span className={` ${ formName ? "select-none" : "invisible"} `}>{ formName ? formName : "invisible" }</span>
                 { required && (
                     <span className="text-alert font-bold ml-1">*</span>
                 ) }
