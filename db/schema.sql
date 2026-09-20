@@ -168,8 +168,8 @@ CREATE TABLE tournaments (
     player_fee DECIMAL(12, 2),
     team_fee DECIMAL(12, 2),
     tournament_type VARCHAR(50),
-    group_transportation_required DEFAULT FALSE;
-    lodging_required DEFAULT FALSE;
+    group_transportation_required BOOLEAN DEFAULT FALSE;
+    lodging_required BOOLEAN DEFAULT FALSE;
     registration_deadline TIMESTAMP WITHOUT TIME ZONE,
 );
 
