@@ -166,7 +166,7 @@ CREATE TABLE practices (
 CREATE TABLE tournaments (
     id INT PRIMARY KEY REFERENCES events(id),
     player_fee DECIMAL(12, 2),
-    team_fee DECIMAL(12, 2)
+    team_fee DECIMAL(12, 2),
 );
 
 CREATE TABLE games (
