@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     DATABASE_URL: str
-    ALLOWED_ORIGINS: str = ""
+    ALLOWED_ORIGINS: str = "http://localhost:3000"
 
     SECRET_KEY: str = ""
 

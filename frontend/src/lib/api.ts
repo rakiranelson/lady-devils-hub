@@ -1,6 +1,6 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL
+import axios from "axios";
 
-export async function apiFetch(path: string) {
-  return fetch(`${API_BASE_URL}${path}`)
-}
+export default axios.create({
+  baseURL: "http://localhost:8000",
+  headers: {"Content-Type": "application/json"}
+});
