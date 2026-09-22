@@ -120,7 +120,7 @@ def get_event_summary(event_id: int, db: Session = Depends(get_db)):
     if event.category == "other":
         return {
             "id": event.id,
-            "name": event.name,
+            "event_name": event.name,
             "category": event.category,
             "location_name": event.location_name,
             "date_label": date_label,
@@ -134,7 +134,7 @@ def get_event_summary(event_id: int, db: Session = Depends(get_db)):
 
         return {
             "id": event.id,
-            "name": event.name,
+            "event_name": event.name,
             "category": event.category,
             "location_name": event.location_name,
             "date_label": date_label,
@@ -153,7 +153,7 @@ def get_event_summary(event_id: int, db: Session = Depends(get_db)):
 
         return {
             "id": event.id,
-            "name": event.name,
+            "event_name": event.name,
             "category": event.category,
             "location_name": event.location_name,
             "date_label": date_label,

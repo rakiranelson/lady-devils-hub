@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, FetchedValue
 from typing import Optional
 from datetime import datetime
 from sqlalchemy.sql import func
@@ -8,6 +8,8 @@ from app.db.connection import Base
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from datetime import datetime
+
+from app.models.user import User
 
 
 class Event(Base):
@@ -24,7 +26,8 @@ class Event(Base):
     event_details: Mapped[Optional[str]]
     start_datetime: Mapped[Optional[datetime]]
     end_datetime: Mapped[Optional[datetime]]
-    created_time: Mapped[datetime]
+    created_time: Mapped[datetime] = mapped_column(FetchedValue())
+    event_status: Mapped[str] = mapped_column(FetchedValue())
 
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
@@ -32,7 +35,7 @@ class Event(Base):
 
 
 class GenericEventResponse(BaseModel):
-    model_config = ConfigDict(alias_generator=to_camel)
+    model_config = ConfigDict(alias_generator=to_camel, validate_by_name=True)
 
     id: int
     category: str

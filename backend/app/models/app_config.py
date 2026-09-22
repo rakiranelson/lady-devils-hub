@@ -3,6 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, Session
 
 from app.db.connection import Base
 from fastapi import Depends
+from app.models.semester import Semester
 
 
 class AppConfig(Base):

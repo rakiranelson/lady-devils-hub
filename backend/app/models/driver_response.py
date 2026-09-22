@@ -1,10 +1,11 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, FetchedValue
 from typing import Optional
 from datetime import datetime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.connection import Base
+from app.models.user import User
 
 
 class DriverResponse(Base):
@@ -16,6 +17,6 @@ class DriverResponse(Base):
     can_drive: Mapped[bool]
     seat_capacity: Mapped[Optional[int]]
     notes: Mapped[Optional[str]]
-    submitted_time: Mapped[datetime]
+    submitted_time: Mapped[datetime] = mapped_column(FetchedValue())
 
     user = relationship("User")

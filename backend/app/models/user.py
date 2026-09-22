@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, FetchedValue
 from typing import Optional
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -24,4 +24,4 @@ class User(Base):
     external_email: Mapped[Optional[str]] = mapped_column(String(255))
     hash_password: Mapped[Optional[str]]
 
-    is_admin: Mapped[bool]
+    is_admin: Mapped[bool] = mapped_column(FetchedValue())

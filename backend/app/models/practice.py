@@ -3,13 +3,13 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship, Session
 
 from app.db.connection import Base
-from app.models.event import GenericEventResponse
+from app.models.event import GenericEventResponse, Event
 
 
 class Practice(Base):
     __tablename__ = "practices"
 
-    id: Mapped[int] = mapped_column(ForeignKey("events.id"))
+    id: Mapped[int] = mapped_column(ForeignKey("events.id"), primary_key=True)
     practice_type: Mapped[str] = mapped_column(String(50))
 
     event = relationship("Event")
