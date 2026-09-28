@@ -12,10 +12,10 @@ export default function RegistrationChip({ response, isRegistered }: StatusPillP
             { (isRegistered === true) ? 
             
                 (
-                <div className="bg-[hsl(135,59%,20%)]/80 h-full rounded-[30px] flex flex-none items-center">
-                    <CircleIcon className="text-success text-[.6rem] mb-[1px] ml-3 mr-2"/>
-                    <span className="text-foreground mr-4">Registered</span>
-                </div>
+                    <div className="bg-[hsl(135,59%,20%)]/80 h-full rounded-[30px] flex flex-none items-center">
+                        <CircleIcon className="text-success text-[.6rem] mb-[1px] ml-3 mr-2"/>
+                        <span className="text-foreground mr-4">Registered</span>
+                    </div>
                 ) :
                 ( 
                     <>

@@ -9,11 +9,17 @@ type FormFieldProps = {
     required?: boolean;
     width?: number;
     multiline?: boolean;
+    value: string;
+    onChange: (value: string) => void;
+    formDependencies?: ((value: string) => void)[]
 };
 
-export default function FormField({ formName, placeholder, required = false, width, multiline = false }: FormFieldProps) {
+export default function FormField({ formName, placeholder, required = false, width, multiline = false, value, onChange, formDependencies = [] }: FormFieldProps) {
 
-    const [value, setValue] = useState("");
+    const handleFormField = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        onChange(e.target.value);
+        formDependencies.forEach((field) => field(""));
+    };
 
     return (
         <div className="flex flex-col h-full">
@@ -28,14 +34,14 @@ export default function FormField({ formName, placeholder, required = false, wid
                 { multiline ? (
                     <textarea
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(e) => handleFormField(e)}
                         placeholder={placeholder}
                         className="placeholder:text-foreground/25 w-full h-full outline-none bg-transparent text-[1.05rem] resize-none"
                     />
                 ) : (
                     <input
                         value={value}
-                        onChange={(e) => setValue(e.target.value)}
+                        onChange={(e) => handleFormField(e)}
                         placeholder={placeholder}
                         className="placeholder:text-foreground/25 w-full outline-none bg-transparent text-[1.05rem]"
                     />

@@ -1,8 +1,14 @@
 type FormCardProps = {
     children: React.ReactNode;
     cardTitle: string
-}
-export default function FormCard({ children, cardTitle }: FormCardProps) {
+};
+
+export type Option = {
+    label: string;
+    value: string
+};
+
+export function FormCard({ children, cardTitle }: FormCardProps) {
 
     return (
         <div className="aspect-[6/7] h-[650px] bg-navigation rounded-[10px] shadow-both-sides flex flex-col">

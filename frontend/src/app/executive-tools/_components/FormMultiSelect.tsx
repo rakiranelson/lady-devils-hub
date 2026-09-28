@@ -4,16 +4,22 @@ import { useState, useRef, useEffect} from "react";
 import DropDownIcon from "@/assets/icons/dropDown.svg";
 import SelectCheckIcon from "@/assets/icons/selectCheck.svg";
 import useScrollFade from "@/hooks/useScrollFade";
+import { Option } from "./FormCard";
 
 type FormProps = {
     formName? : string;
     required? : boolean
+    selected: string[];
+    onChange: (selected: string[]) => void;
+    options: Option[];
+    formDependencies?: ((value: string) => void)[];
+    openOnRight?: boolean,
+    width?: number
 }
 
-export default function FormMultiSelect({ formName, required = false } : FormProps) {
+export default function FormMultiSelect({ formName, required = false, selected, onChange, options, formDependencies = [], openOnRight = false, width } : FormProps) {
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selected, setSelected] = useState<string[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
 
     // close when clicking outside
@@ -41,15 +47,18 @@ export default function FormMultiSelect({ formName, required = false } : FormPro
 
     const handleSelect = (option: string) => {
         if (!selected.includes(option)) {
-            setSelected([...selected, option]);
+            onChange([...selected, option]);
         } else {
-            setSelected(selected.filter(s => s !== option));
+            onChange(selected.filter(s => s !== option));
         }
+        formDependencies.forEach((field) => field(""));
     };
 
-    const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>( [isOpen] );
+    const selectedLabels = selected
+                            .map((val) => options.find((opt) => opt.value === val)?.label)
+                            .filter((label) => label !== undefined);
 
-    const options = ["Group\u00A0Transportation", "Lodging"]
+    const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>( [isOpen] );
 
     return (
         <div className="flex flex-col">
@@ -61,28 +70,31 @@ export default function FormMultiSelect({ formName, required = false } : FormPro
             </div>
             
             
-            <div ref={ containerRef } className="relative flex-none mt-1 w-1/2">
+            <div ref={ containerRef } 
+                className="relative flex-none mt-1"
+                style={{ width: width ? `${width}px` : "50%" }}
+            >
 
                 <div onClick={() => setIsOpen((prev) => !prev)} className={` bg-muted-1/50 inline-flex items-center justify-center w-full rounded-[5px] outline-2 outline-card px-2 py-1 gap-2 group hover:cursor-pointer select-none ${ isOpen ? "outline-primary" : "" } transition-all`}>
                     <span className="text-[1.05rem] mr-auto">
-                        {selected.length === 0 ? (
-                            <span className="text-foreground/25">Select all that apply</span>
+                        {selectedLabels.length > 0 ? (
+                            selectedLabels.join(", ")
                         ) : (
-                            selected.join(", ")
+                            <span className="text-foreground/25">Select all that apply</span>
                         )}
                     </span>
                     <DropDownIcon className={` text-[0.75rem] text-foreground/25 group-hover:text-foreground ${ isOpen ? "rotate-180 mb-0.5" : "rotate-0" } transition-transform duration-200`}/>
                 </div>
 
                 { isOpen && (
-                    <div className="bg-card outline-1 outline-muted-1/50 w-full absolute top-0 left-full ml-2 z-20 rounded-[8px] overflow-hidden select-none">
+                    <div className={` bg-card outline-1 outline-muted-1/50 w-full absolute  ${openOnRight ? "top-0 left-full ml-2": "top-full mt-2"} z-20 rounded-[8px] overflow-hidden select-none `}>
                         <div ref={ scrollContainer } onScroll={ handleScroll } className="max-h-50 overflow-y-auto scrollbar-thin">
                             { options.map((opt) => (
                                 <div 
-                                    key={ opt } onClick={() => handleSelect(opt)}
+                                    key={ opt.value } onClick={() => handleSelect(opt.value)}
                                     className={` flex items-center gap-3 px-4 py-2 cursor-pointer hover:bg-primary `}>
-                                        <span className={` ${ !selected.includes(opt) ? "" : "font-semibold"} `}>{ opt }</span>
-                                        <SelectCheckIcon className={` ${ selected.includes(opt) ? "inline-block -mt-0.5 ml-auto text-[.7rem]" : "hidden"} `}/>
+                                        <span className={` ${ !selected.includes(opt.value) ? "" : "font-semibold"} `}>{ opt.label }</span>
+                                        <SelectCheckIcon className={` ${ selected.includes(opt.value) ? "inline-block -mt-0.5 ml-auto text-[.7rem]" : "hidden"} `}/>
                                         
                                 </div>
                             ))}
