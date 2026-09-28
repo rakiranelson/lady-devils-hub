@@ -1,65 +1,246 @@
-import Image from "next/image";
+"use client";
+
+import { useContext } from "react";
+import { SemesterContext } from "@/contexts/SemesterContext"
+import Header from "@/components/Header"
+import AnnouncementContainer from "@/components/AnnouncementContainer";
+import { AnnouncementProps } from "@/components/Announcement";
+import { EventContainer, Event } from "@/components/EventContainer";
+import Carousel from "@/components/Carousel";
+import { CarouselItem } from "@/components/Carousel";
+import useMediaQuery from "@/hooks/useMediaQuery";
+import OpenPageIcon from "@/assets/icons/openPage.svg";
+import Link from "next/link";
+
 
 export default function Home() {
+
+/* call a function to fetch the announcements with most recent created time coming first */
+  const announcements: AnnouncementProps[]= [
+          {
+              id: 3,
+              content: "Tournament RSVP posted",
+              expiresAt: "Sep 10",
+              createdBy: "Ra'Kira Nelson",
+              pinned: true,
+              createdTime: "6 hours ago"
+          },
+  
+          {
+              id: 2,
+              content: "Complete waiver before Saturday scrimmage. Players without completed waivers cannot participate.",
+              expiresAt: "Sep 03",
+              createdBy: "Ra'Kira Nelson",
+              pinned: false,
+              createdTime: "4 days ago"
+          },
+  
+          {
+              id: 1,
+              content: "Practice location poll posted",
+              expiresAt: "Sep 04",
+              createdBy: "Ra'Kira Nelson",
+              pinned: false,
+              createdTime: "1 week ago"
+          },
+      ];
+  /* call a function to fetch the events with earliest date  from today) first */
+
+  const events: Event[] = [
+    {
+      id: 1,
+      category: "practice",
+      eventName: "Practice 9/3",
+      locationName: "East Duke Lawn",
+      dateLabel: "Thursday Sep 03",
+      endDate: new Date(2026, 8, 3, 19),
+      time: "5:00-7:00pm",
+      practiceType: "Regular",
+      response: "yes"
+    },
+    {
+      id: 2,
+      category: "tournament",
+      eventName: "NIRSA Championship Tournament",
+      locationName: "Charlottesville, VA",
+      dateLabel: "Saturday Sep 05 - Sunday Sep 06",
+      endDate: new Date(2026, 8, 6, 23, 59),
+      time: "",
+      response: null,
+      tournamentType: "Regional",
+      isRegistered: false,
+      registrationDeadline: "9/1 @ 12:00pm",
+      deadlinePassed: false
+    },
+
+    {
+      id: 4,
+      eventName: "Executive Board Meeting",
+      locationName: "Perkins",
+      category: "Other",
+      dateLabel: "Friday Sep 11",
+      endDate: new Date(2026, 8, 4, 18, 45),
+      time: "6:00-6:45pm",
+      response: "yes"
+    },
+
+    {
+      id: 3,
+      category: "practice",
+      eventName: "Practice 9/8",
+      locationName: "Brodie Gym",
+      dateLabel: "Tuesday Sep 08",
+      endDate: new Date(2026, 8, 8, 19),
+      time: "5:00-7:00pm",
+      practiceType: "Conditioning",
+      response: "yes"
+    },
+  ];
+
+  const plays: CarouselItem[] = [
+    {
+      id: 1,
+      playName: "Mesh Spot",
+      playNumber: 1,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-1.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 2,
+      playName: "Double Drive",
+      playNumber: 2,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-2.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 3,
+      playName: "Boot Flood",
+      playNumber: 3,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-3.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 4,
+      playName: "Slant Post Vert",
+      playNumber: 4,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-4.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 5,
+      playName: "Whip Levels",
+      playNumber: 5,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-5.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 6,
+      playName: "Ohio",
+      playNumber: 6,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-6.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 7,
+      playName: "Boot Slip",
+      playNumber: 7,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-7.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 8,
+      playName: "Boot Post Comeback",
+      playNumber: 8,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 9,
+      playName: "Slant Flats",
+      playNumber: 9,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 10,
+      playName: "Drag Whip",
+      playNumber: 10,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-10.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 11,
+      playName: "X Levels Cross",
+      playNumber: 11,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-11.jpg",
+      animation_url: null,
+    },
+
+    {
+      id: 12,
+      playName: "Z Alley Screen",
+      playNumber: 12,
+      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-12.jpg",
+      animation_url: null,
+    }
+  ];
+
+
+  const semester = useContext(SemesterContext)
+
+  const isThreeColumns = useMediaQuery("(min-width: 640px)");
+
+  const visibleEvents =
+    isThreeColumns === null // remove the null thing later
+        ? null
+        : isThreeColumns
+        ? events.slice(0, 3)
+        : events.slice(0, 4);
+
+  
+    const isShortScreen = useMediaQuery("(min-width: 53.125rem) and (max-height: 43.95rem)");
+  
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="h-full flex flex-col">
+      <Header title="Overview" semester={ semester }/>
+      
+      <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-auto mb-2">
+        <AnnouncementContainer announcementList={ announcements }/>
+
+        <div className="mt-3 sm:text-lg">
+          <div className="flex">
+            <p>Upcoming</p>
+            <div className="ml-auto text-muted-1 hover:text-foreground hover:cursor-pointer">
+              <Link href={ "/events" }>See All Events</Link>
+              <OpenPageIcon className="inline text-[0.6rem] ml-2"/>
+            </div>
+          </div>
+          
+          <EventContainer eventList={ visibleEvents } skeletonCount={3}/>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="mt-4 sm:text-lg">
+          <p>Wristband Playbook</p>
+          <div className="max-w-[850px] mx-auto">
+            <Carousel items={ plays } compactOnShortScreen={ !!isShortScreen }/>
+          </div>
         </div>
-      </main>
+       
+      </div>
+
+      <div>
+
+      </div>
     </div>
   );
-}
+};

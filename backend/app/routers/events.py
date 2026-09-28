@@ -77,6 +77,8 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
         created_by=current_user,
     )
 
+    # with auto rsvp
+
     db.add(new)
     db.commit()
     db.refresh(new)
