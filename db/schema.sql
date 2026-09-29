@@ -66,7 +66,6 @@ CREATE TABLE events (
     end_datetime TIMESTAMP,
     created_by INT REFERENCES users(id),
     event_status VARCHAR(20) NOT NULL DEFAULT 'tentative',
-    is_multi_day BOOLEAN NOT NULL DEFAULT FALSE,
     rsvp_open BOOLEAN NOT NULL DEFAULT FALSE,
     created_time TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     

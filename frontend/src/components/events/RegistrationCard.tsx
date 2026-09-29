@@ -4,26 +4,15 @@ type CardProps = {
     response: string | null;
     registrationDeadline: string;
     deadlinePassed: boolean;
+    groupTransportationRequired: boolean;
+    lodgingRequired: boolean;
 };
 
-export default function RegistrationCard({ response, registrationDeadline, deadlinePassed }: CardProps) {
+export default function RegistrationCard({ response, registrationDeadline, deadlinePassed, groupTransportationRequired, lodgingRequired }: CardProps) {
 
-    const groupTransportation = true;
-    const lodging = true;
-    let transportationAssignment = null;
-    let roomAssignment = null;
-
-    if (groupTransportation) {
-        // fetch response information, could be null if not responded yet
-        transportationAssignment = "Ella's Car";
-    };
-
-    // change to const transportationAssignment = groupTransportation ? fetch(database) : null, so you don't have to use the let variable
-
-    if (lodging) {
-        // fetch response information
-        roomAssignment = "Room 231";
-    };
+    // fetch response information, could be null if not responded yet
+    const transportationAssignment = groupTransportationRequired ? "Ella's Car" : null;
+    const roomAssignment = lodgingRequired ? "Room 231" : null;
 
     return (
         <div className="self-start flex flex-col bg-muted-1/30 border-2 border-muted-1/45 rounded-[5px] shadow-small-card items-center text-base w-[280px] flex-none">
@@ -44,7 +33,7 @@ export default function RegistrationCard({ response, registrationDeadline, deadl
                     </div>
                 </div>
 
-                { groupTransportation && (
+                { groupTransportationRequired && (
                     <div className="flex justify-between items-center py-3">
 
                         <div className="text-foreground/70 flex flex-col leading-tight">
@@ -65,7 +54,7 @@ export default function RegistrationCard({ response, registrationDeadline, deadl
                     </div>
                 )}
 
-                { lodging && (
+                { lodgingRequired && (
                     <div className="flex justify-between items-center py-3">
                         
                         <div className="text-foreground/70 flex flex-col leading-tight">

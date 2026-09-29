@@ -26,9 +26,10 @@ export type EventProps = {
     locationName: string;
     category: string;
     dateLabel: string;
-    endDate: Date;
+    endDate: Date | null;
     time: string;
     response?: string | null;
+    isTentative: boolean;
 };
 
 // types for event details card
@@ -39,8 +40,10 @@ export type ExtendedEventProps = {
     locationName: string;
     locationAddress: string;
     dateLabel: string;
+    endDate: Date | null; // not used here
     time: string;
     response: string | null;
+    isTentative: boolean;
     details: string;
 };
 

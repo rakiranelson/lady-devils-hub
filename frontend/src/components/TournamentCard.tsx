@@ -21,20 +21,20 @@ import RegistrationChip from "./events/RegistrationChip";
 import { RVSPList } from "./events/RSVPList";
 
 
-
 export type TournamentProps = {
     id: number;
     category: string;
     eventName: string;
     locationName: string;
     dateLabel: string;
-    endDate: Date;
+    endDate: Date | null;
     time: string;
     tournamentType: string;
     response: string | null; //probably will just pass instead of all day
+    isTentative: boolean;
     isRegistered: boolean;
-    registrationDeadline: string;
-    deadlinePassed: boolean
+    deadlineLabel: string;
+    deadline: Date | null;
 
 };
 
@@ -45,16 +45,22 @@ export type ExtendedTournamentProps = {
     locationName: string;
     locationAddress: string;
     dateLabel: string;
+    endDate: Date | null; // not used here
     time: string;
     tournamentType: string;
     response: string | null;
+    isTentative: boolean;
     isRegistered: boolean;
-    registrationDeadline: string;
-    deadlinePassed: boolean;
+    deadlineLabel: string;
+    deadline: Date | null;
     details: string;
+    groupTransportationRequired: boolean;
+    lodgingRequired: boolean;
 };
 
 export function TournamentCard(tournament : TournamentProps) {
+    const deadlinePassed = tournament.deadline < new Date();
+    
     return (
         <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200">
         
@@ -90,9 +96,9 @@ export function TournamentCard(tournament : TournamentProps) {
                         <span className="truncate">{ tournament.locationName }</span>
                     </div>
 
-                    <div className={`text-[min(1rem,3vw)] overflow-visible flex items-center gap-2 ${ !tournament.deadlinePassed ? "text-warning" : "" }`}>
-                        <DeadlineIcon className={`overflow-visible ${ !tournament.deadlinePassed ? "text-warning animate-shake-repeat" : "" } `}/>
-                        <span className="truncate">Register by { tournament.registrationDeadline }</span>
+                    <div className={`text-[min(1rem,3vw)] overflow-visible flex items-center gap-2 ${ !deadlinePassed ? "text-warning" : "" }`}>
+                        <DeadlineIcon className={`overflow-visible ${ !deadlinePassed ? "text-warning animate-shake-repeat" : "" } `}/>
+                        <span className="truncate">Register by { tournament.deadlineLabel }</span>
                     </div>
 
                     <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.5vw)]">
@@ -101,7 +107,7 @@ export function TournamentCard(tournament : TournamentProps) {
                             : 
                             ( <RegistrationChip response={ tournament.response } isRegistered={ tournament.isRegistered }/> ) 
                         }
-
+                        
                         <div className="flex items-center h-[28px]">
                             <MoreDetails title="Details" href={`/events/${tournament.id}`} color="muted-2"/>
                         </div>
@@ -130,7 +136,6 @@ export function TournamentDetails(tournament : ExtendedTournamentProps) {
         }
         if (scrollContainer.current) {
             setRSVPHeight(scrollContainer.current.offsetHeight - (window.innerWidth >= 640 ? 50 : 45));
-
         }
     };
 
@@ -139,6 +144,8 @@ export function TournamentDetails(tournament : ExtendedTournamentProps) {
     };
 
     const scrollContainer = useRef<HTMLDivElement>(null);
+
+    const deadlinePassed = tournament.deadline < new Date();
 
     return (
         <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
@@ -183,7 +190,13 @@ export function TournamentDetails(tournament : ExtendedTournamentProps) {
 
                       
                         <div ref={ detailsWrapperRef } className={` ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} flex gap-1 overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
-                            <RegistrationCard response={ tournament.response } registrationDeadline={ tournament.registrationDeadline } deadlinePassed={ tournament.deadlinePassed }/>
+                            <RegistrationCard 
+                                response={ tournament.response } 
+                                registrationDeadline={ tournament.deadlineLabel } 
+                                deadlinePassed={ deadlinePassed }
+                                groupTransportationRequired={tournament.groupTransportationRequired}
+                                lodgingRequired={tournament.lodgingRequired}
+                            />
 
                             <DetailsContainer content={ tournament.details }/>
                     

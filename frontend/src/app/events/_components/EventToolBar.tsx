@@ -25,7 +25,7 @@ export default function EventToolBar({ past, setPast, activeFilter, setActiveFil
                 <EventFilter activeFilter={ activeFilter } setActiveFilter={ setActiveFilter }/>
 
                 { eventCount === null && <StatusPillSuspense/>}
-                <StatusPill display={` ${ eventCount } Events`}/>
+                <StatusPill display={` ${ eventCount } ${ eventCount === 1 ? "Event" : "Events"}`}/>
             </div>
         </div>
     )

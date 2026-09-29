@@ -17,16 +17,22 @@ class Practice(Base):
 
 class PracticeResponse(GenericEventResponse):
     practice_type: str
-    response: str | None
 
 
-class PracticeDetailsResponse(PracticeResponse):
+class PracticeDetailedResponse(PracticeResponse):
     location_address: str
     details: str
 
 
 def get_practice_type(event_id, db: Session):
-    return db.scalar(select(Practice).where(Practice.id == event_id)).practice_type
+    practice_type = db.scalar(
+        select(Practice).where(Practice.id == event_id)
+    ).practice_type
+
+    if practice_type == "iq":  # if it iq uppercase
+        return practice_type.upper()
+
+    return practice_type.capitalize()  # capitalize other practice types
 
 
 def add_practice(event_id, practice_type, db: Session):

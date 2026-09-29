@@ -97,7 +97,6 @@ export default function CreateEventCard() {
         }    
         
         // if everything is good, call a post request
-
         const payload = {
             name: name.trim(),
             category: category.trim(),
@@ -118,7 +117,7 @@ export default function CreateEventCard() {
             rsvp_open: autoOpenRSVP,
         }
 
-        console.log("about to POST", payload);
+        console.log("preparing to POST...", payload);
 
         try {
             const response = await api.post("/events/", payload);

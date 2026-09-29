@@ -26,36 +26,43 @@ class Tournament(Base):
 
 class TournamentResponse(GenericEventResponse):
     tournament_type: str
-    response: str | None
     is_registered: bool
-    registration_deadline: datetime
+    deadline: datetime | None
     deadline_label: str
 
 
-class TournamentDetailsResponse(TournamentResponse):
+class TournamentDetailedResponse(TournamentResponse):
     location_address: str
     details: str
+    group_transportation_required: bool
+    lodging_required: bool
 
 
-def get_tournament_summary(event_id, user_id, db: Session):
+def get_tournament(event_id, user_id, db: Session):
     tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
 
-    tournament_type = tournament.tournament_type
-    registration_deadline = tournament.registration_deadline
+    tournament_type = tournament.tournament_type.capitalize()
+    registration_deadline = tournament.registration_deadline or None
+    group_transportation_required = tournament.group_transportation_required
+    lodging_required = tournament.lodging_required
 
     is_registered = db.scalar(
-        select(TournamentRegistration)
-        .where(
-            TournamentRegistration.tournament_id == event_id,
-            TournamentRegistration.user_id == user_id,
+        select(
+            select(TournamentRegistration)
+            .where(
+                TournamentRegistration.tournament_id == event_id,
+                TournamentRegistration.user_id == user_id,
+            )
+            .exists()
         )
-        .exists()
     )
 
     return {
         "tournament_type": tournament_type,
         "is_registered": is_registered,
         "registration_deadline": registration_deadline,
+        "group_transportation_required": group_transportation_required,
+        "lodging_required": lodging_required,
     }
 
 
@@ -74,7 +81,7 @@ def add_tournament(
 
     registration_deadline = datetime.strptime(
         f"{registration_deadline_date} {registration_deadline_time}",
-        "%Y-%m-%d %I:%M %p",
+        "%m-%d-%Y %I:%M %p",
     )
 
     new = Tournament(

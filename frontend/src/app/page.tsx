@@ -56,7 +56,8 @@ export default function Home() {
       endDate: new Date(2026, 8, 3, 19),
       time: "5:00-7:00pm",
       practiceType: "Regular",
-      response: "yes"
+      response: "yes",
+      isTentative: false,
     },
     {
       id: 2,
@@ -67,10 +68,11 @@ export default function Home() {
       endDate: new Date(2026, 8, 6, 23, 59),
       time: "",
       response: null,
+      isTentative: false,
       tournamentType: "Regional",
       isRegistered: false,
-      registrationDeadline: "9/1 @ 12:00pm",
-      deadlinePassed: false
+      deadlineLabel: "9/1 @ 12:00pm",
+      deadline: new Date(2026, 8, 1, 23, 59),
     },
 
     {
@@ -81,7 +83,8 @@ export default function Home() {
       dateLabel: "Friday Sep 11",
       endDate: new Date(2026, 8, 4, 18, 45),
       time: "6:00-6:45pm",
-      response: "yes"
+      response: "yes",
+      isTentative: false,
     },
 
     {
@@ -93,7 +96,8 @@ export default function Home() {
       endDate: new Date(2026, 8, 8, 19),
       time: "5:00-7:00pm",
       practiceType: "Conditioning",
-      response: "yes"
+      response: "yes",
+      isTentative: false,
     },
   ];
 

@@ -7,19 +7,26 @@ from app.db.connection import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from app.models.event import Event, GenericEventResponse
+from app.models.event import (
+    Event,
+    GenericEventResponse,
+    GenericEventDetailedResponse,
+    format_event_data,
+)
 from app.models.semester import Semester
 from app.models.app_config import get_current_semester_id
 from app.models.practice import (
     Practice,
     PracticeResponse,
+    PracticeDetailedResponse,
     get_practice_type,
     add_practice,
 )
 from app.models.tournament import (
     Tournament,
     TournamentResponse,
-    get_tournament_summary,
+    TournamentDetailedResponse,
+    get_tournament,
     add_tournament,
 )
 from app.models.rsvp_submission import get_rsvp_response
@@ -50,8 +57,53 @@ class EventCreateResponse(BaseModel):
 
 
 EventResponse = PracticeResponse | TournamentResponse | GenericEventResponse
+DetailedEventResponse = (
+    PracticeDetailedResponse | TournamentDetailedResponse | GenericEventDetailedResponse
+)
 
 router = APIRouter(prefix="/events", tags=["events"])
+
+
+def get_event_response_object(event, current_user, db: Session):
+    event_response_base = format_event_data(event)
+
+    # rsvp_response = get_rsvp_response(event_id=event.id, user_id=current_user, db=db)
+    rsvp_response = None
+    event_response_base["response"] = rsvp_response
+
+    if event.category == "other" or event.category == "game":
+        return event_response_base
+
+    if event.category == "practice":
+        practice_type = get_practice_type(event.id, db=db)
+        event_response_base["practice_type"] = practice_type
+
+        return event_response_base
+
+    if event.category == "tournament":
+        tournament = get_tournament(event.id, current_user, db=db)
+
+        deadline = tournament["registration_deadline"]
+        deadline_label = (
+            f"{deadline.strftime('%m/%d')} @ {deadline.strftime('%I:%M%p').lstrip('0').lower()}"
+            if deadline
+            else "TBD"
+        )
+
+        event_response_base["tournament_type"] = tournament["tournament_type"]
+        event_response_base["is_registered"] = tournament["is_registered"]
+        event_response_base["deadline_label"] = deadline_label
+        event_response_base["deadline"] = deadline
+        event_response_base["group_transportation_required"] = tournament[
+            "group_transportation_required"
+        ]
+        event_response_base["lodging_required"] = tournament["lodging_required"]
+
+        return event_response_base
+
+    raise HTTPException(
+        status_code=500, detail=f"Invalid event category: {event.category}"
+    )
 
 
 @router.post("/", response_model=EventCreateResponse)
@@ -116,7 +168,6 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
         start_datetime=start_datetime,
         end_datetime=end_datetime,
         rsvp_open=event.rsvp_open,
-        is_multi_day=event.is_multi_day,
         event_status=event_status,
         created_by=current_user,
     )
@@ -137,7 +188,8 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
                 event.registration_deadline_time,
                 db,
             )
-    except Exception:
+    except Exception as e:
+        print("REAL ERROR INSIDE PRACTICE/TOURNAMENT INSERT:", repr(e))
         db.delete(new)
         db.commit()
         raise HTTPException(status_code=500, detail="Failed to create event.")
@@ -145,88 +197,31 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
     return new
 
 
-@router.get("/{event_id}", response_model=EventResponse)
-def get_event_summary(event_id: int, db: Session = Depends(get_db)):
+@router.get("/", response_model=list[EventResponse])
+def get_events(db: Session = Depends(get_db)):
+    event_list = []
+
+    events = db.scalars(select(Event).where(Event.event_status == "scheduled")).all()
+    current_user = 1
+
+    for event in events:
+        event_response = get_event_response_object(event, current_user, db)
+        event_list.append(event_response)
+
+    return event_list
+
+
+@router.get("/{event_id}", response_model=DetailedEventResponse)
+def get_event_details(event_id: int, db: Session = Depends(get_db)):
     event = db.scalar(select(Event).where(Event.id == event_id))
     current_user = 1
 
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
 
-    same_day = event.start_datetime.date() == event.end_datetime.date()
+    event_response = get_event_response_object(event, current_user, db)
 
-    # format date and time labels
-    if same_day:
-        date_label = event.start_datetime.strftime("%A, %b %d")
-        start_period = event.start_datetime.strftime("%p")
-        end_period = event.end_datetime.strftime("%p")
+    event_response["location_address"] = event.location_address or "TBD"
+    event_response["details"] = event.event_details or "N/A"
 
-        if start_period == end_period:  # both am or both pm
-            start = event.start_datetime.strftime("%I:%M").lstrip("0")
-        else:
-            start = event.start_datetime.strftime("%I:%M%p").lstrip("0").lower()
-
-        end = event.end_datetime.strftime("%I:%M%p").lstrip("0").lower()
-        time = f"{start} - {end}"
-
-    else:
-        start_day = event.start_datetime.strftime("%b %d")
-        end_day = event.end_datetime.strftime("%b %d")
-        date_label = f"{start_day} - {end_day}"
-        time = "All Day"
-
-    # fetch response
-    response = get_rsvp_response(event_id=event.id, user_id=current_user, db=db)
-
-    if event.category == "other":
-        return {
-            "id": event.id,
-            "event_name": event.name,
-            "category": event.category,
-            "location_name": event.location_name,
-            "date_label": date_label,
-            "end_date": event.end_datetime,
-            "time": time,
-            "response": response,
-        }
-
-    if event.category == "practice":
-        practice_type = get_practice_type(event.id, db=db)
-
-        return {
-            "id": event.id,
-            "event_name": event.name,
-            "category": event.category,
-            "location_name": event.location_name,
-            "date_label": date_label,
-            "end_date": event.end_datetime,
-            "time": time,
-            "practice_type": practice_type,
-            "response": response,
-        }
-
-    if event.category == "tournament":
-        summary = get_tournament_summary(event.id, current_user, db=db)
-        tournament_type = summary["tournament_type"]
-        is_registered = summary["is_registered"]
-        deadline = summary["registration_deadline"]
-        deadline_label = deadline.strftime("%A, %b %d")
-
-        return {
-            "id": event.id,
-            "event_name": event.name,
-            "category": event.category,
-            "location_name": event.location_name,
-            "date_label": date_label,
-            "end_date": event.end_datetime,
-            "time": time,
-            "tournament_type": tournament_type,
-            "response": response,
-            "is_registered": is_registered,
-            "registration_deadline": deadline,
-            "deadline_label": deadline_label,
-        }
-
-    raise HTTPException(
-        status_code=500, detail=f"Invalid event category: {event.category}"
-    )
+    return event_response

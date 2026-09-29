@@ -20,6 +20,12 @@ export function EventContainer({ eventList, skeletonCount }: EventContainerProps
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 p-1 gap-4 justify-between rounded-[5px]">
 
+                { eventList.length === 0 && (
+                    <div className="pl-3 text-lg text-foreground/75">
+                        No events found.
+                    </div>
+                )}
+
                 {eventList.map((event) => {
                     if (event.category === "practice") {
                         return <PracticeCard key={ event.id } { ...event } />;

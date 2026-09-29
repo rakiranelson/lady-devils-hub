@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect } from "react";
 import { SemesterContext } from "@/contexts/SemesterContext"
 import Header from "@/components/Header";
 import EventToolBar from "./_components/EventToolBar";
@@ -8,6 +8,8 @@ import { EventContainer, Event } from "@/components/EventContainer";
 import { useRouter, useSearchParams } from "next/navigation";
 import useScrollFade from "@/hooks/useScrollFade";
 import ScrollTop from "@/components/ScrollTop";
+
+import api from "@/lib/api";
 
 export default function Events() {
   const router = useRouter();
@@ -39,117 +41,25 @@ export default function Events() {
     router.push(`?${ params.toString() }`)
   }
 
-  // make sure this fetched happens on every refresh. put it in a useEffect and then setEvents to set the state
-   const fetchedEvents: Event[] = [
-    {
-      id: 1,
-      category: "practice",
-      eventName: "Practice 9/3",
-      locationName: "East Duke Lawn",
-      dateLabel: "Thursday Sep 03",
-      endDate: new Date(2026, 8, 3, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Regular",
-      response: "yes"
-    },
-    {
-      id: 2,
-      category: "tournament",
-      eventName: "NIRSA Championship Tournament",
-      locationName: "Charlottesville, VA",
-      dateLabel: "Saturday Sep 05 - Sunday Sep 06",
-      endDate: new Date(2026, 8, 6, 23, 59),
-      time: "",
-      response: "no",
-      tournamentType: "Regional",
-      isRegistered: false,
-      registrationDeadline: "9/1 @ 12:00pm",
-      deadlinePassed: false
-    },
+   const [events, setEvents] = useState<Event[]>([]); 
 
-    {
-      id: 4,
-      eventName: "Executive Board Meeting",
-      locationName: "Perkins",
-      category: "other",
-      dateLabel: "Friday Sep 04",
-      endDate: new Date(2026, 8, 4, 18, 45),
-      time: "6:00-6:45pm",
-      response: "yes"
-    },
+   useEffect(() => {
+    const fetchEvents = async () => {
+        try {
+            const response = await api.get("/events/");
+            const parsedEvents = response.data.map((event: any) => ({
+                ...event,
+                endDate: new Date(event.endDate),
+            }));
+            setEvents(parsedEvents);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
-    {
-      id: 3,
-      category: "practice",
-      eventName: "Practice 9/8",
-      locationName: "Brodie Gym",
-      dateLabel: "Tuesday Sep 08",
-      endDate: new Date(2026, 8, 8, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Conditioning",
-      response: "maybe"
-    },
+    fetchEvents();
+    }, []);
 
-    {
-      id: 5,
-      category: "practice",
-      eventName: "Practice 9/10",
-      locationName: "East Duke Lawn",
-      dateLabel: "Thursday Sep 10",
-      endDate: new Date(2026, 8, 10, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Regular",
-      response: "no"
-    },
-
-    {
-      id: 6,
-      category: "game",
-      eventName: "Duke v NCCU",
-      locationName: "NCCU's field",
-      dateLabel: "Saturday Sep 12",
-      endDate: new Date(2026, 8, 12, 14),
-      time: "12:00-2:00pm",
-      response: "yes",
-    },
-
-    {
-      id: 7,
-      eventName: "Wine Night",
-      locationName: "Blue Light Apt 407",
-      category: "other",
-      dateLabel: "Friday Sep 11",
-      endDate: new Date(2026, 8, 11, 18),
-      time: "6:00pm",
-      response: null
-    },
-
-    {
-      id: 8,
-      category: "practice",
-      eventName: "Practice 7/21",
-      locationName: "Brodie Gym",
-      dateLabel: "Tuesday Jul 21",
-      endDate: new Date(2026, 6, 21, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Conditioning",
-      response: "no"
-    },
-    {
-      id: 9,
-      category: "practice",
-      eventName: "Practice 7/23",
-      locationName: "East Duke Lawn",
-      dateLabel: "Thursday Jul 23",
-      endDate: new Date(2026, 6, 23, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Regular",
-      response: "yes"
-    },
-  ];
-
-  // const [events, setEvents] = useState<Event[]>([]); 
-  const [events, setEvents] = useState<Event[]>(fetchedEvents); 
 
   const filterCategories: Record<string, string[]> = {
     "practices": ["practice"],

@@ -27,10 +27,11 @@ export type PracticeProps = {
     eventName: string;
     locationName: string;
     dateLabel: string;
-    endDate: Date;
+    endDate: Date | null;
     time: string;
     practiceType: string;
     response: string | null;
+    isTentative: boolean;
 
 };
 
@@ -42,9 +43,11 @@ export type ExtendedPracticeProps = {
     locationName: string;
     locationAddress: string;
     dateLabel: string;
+    endDate: Date | null; // not used here
     time: string;
     practiceType: string;
     response: string | null;
+    isTentative: boolean;
     details: string;
 };
 
@@ -211,8 +214,6 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
 
 
                 </div>
-            
-            
 
         </div>
     );
