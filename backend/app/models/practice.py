@@ -27,3 +27,11 @@ class PracticeDetailsResponse(PracticeResponse):
 
 def get_practice_type(event_id, db: Session):
     return db.scalar(select(Practice).where(Practice.id == event_id)).practice_type
+
+
+def add_practice(event_id, practice_type, db: Session):
+    new = Practice(id=event_id, practice_type=practice_type)
+
+    db.add(new)
+    db.commit()
+    db.refresh(new)

@@ -19,18 +19,20 @@ class Event(Base):
     name: Mapped[str] = mapped_column(String(255))
     semester_id: Mapped[int] = mapped_column(ForeignKey("semesters.id"))
     category: Mapped[str] = mapped_column(String(30))
-    location_name: Mapped[str] = mapped_column(String(255))
 
     # optional
+    location_name: Mapped[Optional[str]] = mapped_column(String(255))
     location_address: Mapped[Optional[str]] = mapped_column(String(255))
     event_details: Mapped[Optional[str]]
     start_datetime: Mapped[Optional[datetime]]
     end_datetime: Mapped[Optional[datetime]]
     created_time: Mapped[datetime] = mapped_column(FetchedValue())
-    event_status: Mapped[str] = mapped_column(FetchedValue())
+    event_status: Mapped[str]
+
+    is_multi_day: Mapped[bool]
+    rsvp_open: Mapped[bool]
 
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
-
     creator = relationship("User")
 
 

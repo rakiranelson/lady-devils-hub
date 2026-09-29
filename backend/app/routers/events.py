@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from fastapi import APIRouter, Depends, HTTPException
-from typing import Optional
+from typing import Optional, Literal
 from datetime import datetime
 
 from app.db.connection import get_db
@@ -10,22 +10,37 @@ from sqlalchemy import select
 from app.models.event import Event, GenericEventResponse
 from app.models.semester import Semester
 from app.models.app_config import get_current_semester_id
-from app.models.practice import Practice, PracticeResponse, get_practice_type
-from app.models.tournament import Tournament, TournamentResponse, get_tournament_summary
+from app.models.practice import (
+    Practice,
+    PracticeResponse,
+    get_practice_type,
+    add_practice,
+)
+from app.models.tournament import (
+    Tournament,
+    TournamentResponse,
+    get_tournament_summary,
+    add_tournament,
+)
 from app.models.rsvp_submission import get_rsvp_response
 
 
 class EventCreate(BaseModel):
     name: str
-    category: str
+    category: Literal["practice", "tournament", "game", "other"]
     location_name: str
     location_address: Optional[str] = None
     details: Optional[str] = None
-    start_date: str
+    start_date: Optional[str] = None
     end_date: Optional[str] = None  # None for single day events
-    time_start: Optional[str] = None  # None for multi-day events
-    time_end: Optional[str] = None  # None for multi-day events
-    auto_open_rsvp: bool
+    start_time: Optional[str] = None  # None for multi-day events
+    end_time: Optional[str] = None  # None for multi-day events
+    event_type: Optional[str] = None
+    additional_requirements: Optional[list[str]] = None
+    registration_deadline_date: Optional[str] = None
+    registration_deadline_time: Optional[str] = None
+    is_multi_day: bool
+    rsvp_open: bool
 
 
 class EventCreateResponse(BaseModel):
@@ -48,21 +63,47 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
     # get current user
     current_user = 1
 
+    is_tentative = (
+        event.start_date is None
+        or (event.location_name is None and event.location_address is None)
+        or (
+            (event.is_multi_day and event.end_date is None)
+            or (not event.is_multi_day and event.start_time is None)
+        )
+    )
+
+    event_status = "tentative" if is_tentative else "scheduled"
+
     # datetime logic
-    if event.end_date and not event.time_start:
-        start_datetime = datetime.strptime(event.start_date, "%Y-%m-%d")
-        end_datetime = datetime.strptime(event.end_date, "%Y-%m-%d")
-    elif event.time_start and not event.end_date:
-        start_datetime = datetime.strptime(
-            f"{event.start_date} {event.time_start}", "%Y-%m-%d %I:%M %p"
-        )
-        end_datetime = datetime.strptime(
-            f"{event.start_date} {event.time_end}", "%Y-%m-%d %I:%M %p"
-        )
+    start_datetime = None
+    end_datetime = None
+
+    if event.is_multi_day:
+        # multi day events
+        if event.start_date:
+            start_datetime = datetime.strptime(event.start_date, "%m-%d-%Y")
+        if event.end_date:
+            end_datetime = datetime.strptime(event.end_date, "%m-%d-%Y")
+
     else:
+        # single day events
+        if event.start_date and event.start_time:
+            start_datetime = datetime.strptime(
+                f"{event.start_date} {event.start_time}", "%m-%d-%Y %I:%M %p"
+            )
+        if event.start_date and event.end_time:
+            end_datetime = datetime.strptime(
+                f"{event.start_date} {event.end_time}", "%m-%d-%Y %I:%M %p"
+            )
+
+    if (not event.is_multi_day and event.end_date) or (
+        event.is_multi_day and (event.start_time or event.end_time)
+    ):
+        # if a single event has extra end date
+        # if multi day event has a start/end time
         raise HTTPException(
             status_code=400,
-            detail="Must provide either end_date OR time_start/time_end",
+            detail="The event data does not match the expected structure for its type.",
         )
 
     new = Event(
@@ -74,14 +115,32 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
         event_details=event.details,
         start_datetime=start_datetime,
         end_datetime=end_datetime,
+        rsvp_open=event.rsvp_open,
+        is_multi_day=event.is_multi_day,
+        event_status=event_status,
         created_by=current_user,
     )
-
-    # with auto rsvp
 
     db.add(new)
     db.commit()
     db.refresh(new)
+
+    try:
+        if new.category == "practice":
+            add_practice(new.id, event.event_type, db)
+        if new.category == "tournament":
+            add_tournament(
+                new.id,
+                event.event_type,
+                event.additional_requirements,
+                event.registration_deadline_date,
+                event.registration_deadline_time,
+                db,
+            )
+    except Exception:
+        db.delete(new)
+        db.commit()
+        raise HTTPException(status_code=500, detail="Failed to create event.")
 
     return new
 

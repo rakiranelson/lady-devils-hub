@@ -10,13 +10,14 @@ import FormToggle from "./FormToggle";
 import NoticeIcon from "@/assets/icons/notice.svg";
 import SelectCheckIcon from "@/assets/icons/selectCheck.svg";
 
+import api from "@/lib/api";
 
 export default function CreateEventCard() {
     const [page, setPage] = useState(1);
     const [prevPage, setPrevPage] = useState(0);
     const router = useRouter();
-
-    // onclick needs to set state and render the correct parts of the form by submitting to backend and getting a specialized state
+    const [error, setError] = useState<string>("");
+    const [submitError, setSubmitError] = useState<string>("");
 
     // page 1 form fields
     const [name, setName] = useState<string>("");
@@ -32,10 +33,10 @@ export default function CreateEventCard() {
 
     // page 2 form fields
     const [additionalRequirements, setAdditionalRequirements] = useState<string[]>([]);
-    const [registrationDeadline, setRegistrationDeadline] = useState<string>("");
+    const [registrationDeadlineDate, setRegistrationDeadlineDate] = useState<string>("");
+    const [registrationDeadlineTime, setRegistrationDeadlineTime] = useState<string>("");
     const [details, setDetails] = useState<string>("");
     const [autoOpenRSVP, setAutoOpenRSVP] = useState(false);
-
     const isTentative =
         (
             startDate === "" ||
@@ -43,10 +44,9 @@ export default function CreateEventCard() {
             (isMultiDay ? endDate === "" : startTime === "")
         );
 
-
-    const [error, setError] = useState<string>("");
-
     const handleNext = () => {
+        setError("");
+
         const missingFields: string[] = [];
 
         if (name.trim() === "") missingFields.push("Event Name");
@@ -61,7 +61,6 @@ export default function CreateEventCard() {
         }
 
         !isTentative ? setAutoOpenRSVP(true) : setAutoOpenRSVP(false);
-        setError("");
 
         setPrevPage(page);
         setPage(page + 1); 
@@ -69,9 +68,10 @@ export default function CreateEventCard() {
 
     useEffect(() => {
         setError("");
-    }, [name, category, eventType, registrationDeadline]);
+    }, [name, category, eventType, registrationDeadlineDate, registrationDeadlineTime]);
 
     const handleBack = () => {
+        setError("");
         setPage(prevPage)
         setPrevPage(prevPage - 1)
     };
@@ -81,18 +81,56 @@ export default function CreateEventCard() {
         // get rid of temp event id
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const missingFields: string[] = [];
 
-        if (!isTentative) {
-            if (registrationDeadline === "") missingFields.push("Registration Deadline")
+        if (!isTentative && category === "tournament") {
+            if (registrationDeadlineDate === "" || registrationDeadlineTime == "") {
+                missingFields.push("Registration Deadline")
+            }
         }
 
         if (missingFields.length > 0) {
+            console.log("blocked by missing fields", missingFields);
             setError(`Please fill in: ${missingFields.join(", ")}`);
             return;
-        }        
+        }    
+        
+        // if everything is good, call a post request
+
+        const payload = {
+            name: name.trim(),
+            category: category.trim(),
+            location_name: locationName === "" ? null : locationName.trim(),
+            location_address: locationAddress === "" ? null : locationAddress.trim(),
+            details: details === "" ? null : details,
+            start_date: startDate === "" ? null : startDate,
+            end_date: isMultiDay ? (endDate === "" ? null : endDate) : null ,
+            start_time: !isMultiDay ? (startTime === "" ? null : startTime) : null,
+            end_time: !isMultiDay ? (endTime === "" ? null : endTime) : null,
+
+            // extra variables
+            event_type: eventType === "" ? null : eventType.trim(),
+            additional_requirements: (category === "tournament") ? additionalRequirements : null,
+            registration_deadline_date: (category === "tournament") ? registrationDeadlineDate : null,
+            registration_deadline_time: (category === "tournament") ? registrationDeadlineTime : null,
+            is_multi_day: isMultiDay,
+            rsvp_open: autoOpenRSVP,
+        }
+
+        console.log("about to POST", payload);
+
+        try {
+            const response = await api.post("/events/", payload);
+            console.log("SUCCESS", response.data);
+            router.replace("/events");
+            router.push(`/events/${response.data.id}`);
+        } catch (err) {
+            console.error(err)
+            setSubmitError("Something went wrong while saving the event. Please try again.")
+        }
     };
+
 
     return (
         <FormCard cardTitle="Create Event">
@@ -110,7 +148,7 @@ export default function CreateEventCard() {
                             <div className="flex flex-col gap-1">
                                 <FormField 
                                     formName={ isMultiDay ? "Start Date" : "Date"} 
-                                    placeholder="02/01/2025" 
+                                    placeholder="02-01-2025" 
                                     value={startDate}
                                     onChange={setStartDate}
                                     width={150}
@@ -130,7 +168,7 @@ export default function CreateEventCard() {
                                 (
                                     <FormField
                                         formName="End Date"
-                                        placeholder="02/03/2025" 
+                                        placeholder="02-03-2025" 
                                         value={endDate}
                                         onChange={setEndDate}
                                         formDependencies={[setStartTime, setEndTime]}
@@ -148,7 +186,7 @@ export default function CreateEventCard() {
                                             width={100}
                                             
                                         />
-                                        <span className="w-3 border-b-2 border-foreground mb-10"></span>
+                                        <span className="w-3 border-b-2 border-foreground mb-10"/>
                                         <FormField 
                                             placeholder="7:00 PM" 
                                             value={endTime}
@@ -267,14 +305,26 @@ export default function CreateEventCard() {
                                     ]}
                                     openOnRight={true}
                                 />
-                                <FormField 
-                                    formName="Registration Deadline"
-                                    required={isTentative ? false: true}
-                                    placeholder="01/28/2025" 
-                                    value={registrationDeadline}
-                                    onChange={setRegistrationDeadline}
-                                    width={150}
-                                />
+                                <div className="flex gap-2 items-end">
+                                    <FormField 
+                                        formName="Registration Deadline"
+                                        required={isTentative ? false: true}
+                                        placeholder="01-28-2025" 
+                                        value={registrationDeadlineDate}
+                                        onChange={setRegistrationDeadlineDate}
+                                        width={150}
+                                    />
+                                    <span className="w-3 mb-1">@</span>
+                                    <FormField 
+                                        placeholder="7:00 PM" 
+                                        value={registrationDeadlineTime}
+                                        onChange={setRegistrationDeadlineTime}
+                                        width={100}
+                                    />
+                                    { error !== "" && (
+                                        <div className="text-alert text-sm bg-background/20 rounded-[5px] px-2 w-fit h-fit">{ error }</div>
+                                    )}
+                                </div>
                             </div>
                             
                         )}
