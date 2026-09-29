@@ -71,12 +71,18 @@ export default function Events() {
     const now = new Date();
     const categories = filterCategories[activeFilter];
 
-    return events.filter((event) => {
+    const filtered = events.filter((event) => {
       const matchesCategory = activeFilter === "all" || categories.includes(event.category);
       const matchesTiming = past ? event.endDate < now : event.endDate >= now;
       return matchesCategory && matchesTiming;
     });
-  }, [events, activeFilter, past]);
+
+    if (past) {
+        return [...filtered].reverse();
+    }
+
+    return filtered;
+    }, [events, activeFilter, past]);
 
   const eventCount = filteredEvents.length;
 

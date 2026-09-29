@@ -122,8 +122,11 @@ export default function CreateEventCard() {
         try {
             const response = await api.post("/events/", payload);
             console.log("SUCCESS", response.data);
-            router.replace("/events");
-            router.push(`/events/${response.data.id}`);
+
+            // await router.replace("/events"); // change this later
+            // router.push(`/events/${response.data.id}`);
+
+            router.replace(`/events/${response.data.id}`);
         } catch (err) {
             console.error(err)
             setSubmitError("Something went wrong while saving the event. Please try again.")

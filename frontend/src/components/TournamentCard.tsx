@@ -151,9 +151,9 @@ export function TournamentDetails(tournament : ExtendedTournamentProps) {
         <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
             <div className="w-full h-1/8 rounded-t-[18px] overflow-hidden relative select-none">
                 <Image
-                    className="object-cover object-[30%_60%] opacity-40"
-                    src="/practices.png"
-                    alt="Practice Banner"
+                    className="object-cover object-[50%_40%] opacity-40"
+                    src="/tournaments.jpg"
+                    alt="Tournament Banner"
                     fill={ true }
                     priority
                 />

@@ -201,7 +201,12 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
 def get_events(db: Session = Depends(get_db)):
     event_list = []
 
-    events = db.scalars(select(Event).where(Event.event_status == "scheduled")).all()
+    events = db.scalars(
+        select(Event)
+        .where(Event.event_status == "scheduled")
+        .order_by(Event.start_datetime)
+    ).all()
+
     current_user = 1
 
     for event in events:
