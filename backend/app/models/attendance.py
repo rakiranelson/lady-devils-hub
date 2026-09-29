@@ -3,6 +3,8 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.connection import Base
+from app.models.user import User
+from app.models.event import Event
 
 
 class Attendance(Base):

@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, FetchedValue
 from datetime import datetime, time
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column
@@ -15,4 +15,4 @@ class UserAvailability(Base):
     day_of_week: Mapped[str] = mapped_column(String(10))
     start_time: Mapped[time]
     end_time = Mapped[time]
-    last_updated = Mapped[datetime]
+    last_updated = Mapped[datetime] = mapped_column(FetchedValue())

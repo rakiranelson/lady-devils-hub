@@ -4,9 +4,10 @@ from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.connection import Base
+from app.models.lodging import Lodging
 
 
-class RoomSpaces(Base):
+class RoomSpace(Base):
     __tablename__ = "room_spaces"
 
     id: Mapped[int] = mapped_column(primary_key=True)
