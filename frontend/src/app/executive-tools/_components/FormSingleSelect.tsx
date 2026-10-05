@@ -66,7 +66,7 @@ export default function FormSingleSelect({ formName, required = false, selected,
             <div>
                 <span className={` ${ formName ? "select-none" : "invisible"} `}>{ formName ? formName : "invisible" }</span>
                 { required && (
-                        <span className="text-alert font-bold ml-1">*</span>
+                        <span className="text-alert font-bold ml-1 select-none">*</span>
                     ) }
             </div>
             

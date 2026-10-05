@@ -1,21 +1,39 @@
 "use client";
 
-import { Announcement, AnnouncementProps, AnnouncementDetails} from "@/components/Announcement";
+import { useState, useEffect } from "react";
+import { Announcement, AnnouncementProps} from "@/components/Announcement";
 import useScrollFade from "@/hooks/useScrollFade";
+import api from "@/lib/api";
+import AnnouncementSuspense from "./AnnouncementSuspense";
 
-type AnnouncementContainerProps = {
-    announcementList: AnnouncementProps[];
-};
+export default function AnnouncementContainer() {
+    const [announcements, setAnnouncements] = useState<AnnouncementProps[] | null>(null);
+    const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>();
 
-export default function AnnouncementContainer({ announcementList }: AnnouncementContainerProps) {
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const response = await api.get("/announcements/");
+                setAnnouncements(response.data);
+                console.log(response.data)
+            } catch (err) {
+                console.error(err);
+            }
+        };
+    
+        fetchAnnouncements();
+        }, []);
+
+    if (announcements === null) {
+        return <AnnouncementSuspense count={3} />; 
+    }
 
     const pinnedAnnouncements =
-    announcementList.filter(a => a.pinned);
+    announcements.filter(a => a.pinned);
 
     const regularAnnouncements =
-    announcementList.filter(a => !a.pinned);
+    announcements.filter(a => !a.pinned);
 
-    const { scrollContainer, showFade, handleScroll } = useScrollFade<HTMLDivElement>();
 
     return (
         <div className="w-full justify-between rounded-[5px] border-muted-2 relative">
@@ -25,7 +43,7 @@ export default function AnnouncementContainer({ announcementList }: Announcement
 
             <div className="pt-1 h-22 overflow-y-auto" ref={scrollContainer} onScroll={handleScroll}>
 
-                { announcementList.length === 0 && (
+                { announcements.length === 0 && (
                     <div className="pl-3">
                         There are no recent announcements.
                     </div>
@@ -56,3 +74,4 @@ export default function AnnouncementContainer({ announcementList }: Announcement
         </div>
     );
 };
+

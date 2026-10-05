@@ -27,7 +27,7 @@ export default function ManagementContainer() {
                     name="Announcement"
                     description="Create and post important updates, reminders, and information."
                     management={true}
-                    actionHref="/"
+                    actionHref="/executive-tools/create-announcement"
                 />
                 <ToolCard 
                     icon={ <PollIcon className="text-foreground text-[2.25rem]" strokeWidth={4}/>}

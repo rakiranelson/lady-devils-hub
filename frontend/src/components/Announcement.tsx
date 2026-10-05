@@ -3,8 +3,6 @@ import PinIcon from "@/assets/icons/pin.svg";
 export type AnnouncementProps = {
     id: number;
     content: string;
-    expiresAt: string;
-    createdBy: string;
     pinned: boolean;
     createdTime: string;
 };
@@ -20,7 +18,7 @@ export function Announcement(announcement : AnnouncementProps) {
                 )}
 
             </div>
-            <div className="w-22 shrink-0 whitespace-nowrap flex justify-end text-muted-2/70 sm:text-base">
+            <div className="w-25 shrink-0 whitespace-nowrap flex justify-end text-muted-2/70 sm:text-base">
                 { announcement.createdTime }
             </div>
             <div className={` ml-4 sm:text-base ${ announcement.pinned ? "font-semibold" : "text-foreground/85"} `}>

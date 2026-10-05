@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { FormCard, Option} from "./FormCard";
+import { FormCard } from "./FormCard";
 import FormField from "./FormField";
 import FormMultiSelect from "./FormMultiSelect";
 import FormSingleSelect from "./FormSingleSelect";
 import FormToggle from "./FormToggle";
 import NoticeIcon from "@/assets/icons/notice.svg";
-import SelectCheckIcon from "@/assets/icons/selectCheck.svg";
+import getFormattedDate from "@/lib/getFormattedDate";
 
 import api from "@/lib/api";
+import Checkbox from "./Checkbox";
 
 export default function CreateEventCard() {
     const [page, setPage] = useState(1);
@@ -18,6 +19,9 @@ export default function CreateEventCard() {
     const router = useRouter();
     const [error, setError] = useState<string>("");
     const [submitError, setSubmitError] = useState<string>("");
+
+    const placeholderStartDate = getFormattedDate(7);
+    const placeholderEndDate = getFormattedDate(10);
 
     // page 1 form fields
     const [name, setName] = useState<string>("");
@@ -115,9 +119,7 @@ export default function CreateEventCard() {
             registration_deadline_time: (category === "tournament") ? registrationDeadlineTime : null,
             is_multi_day: isMultiDay,
             rsvp_open: autoOpenRSVP,
-        }
-
-        console.log("preparing to POST...", payload);
+        };
 
         try {
             const response = await api.post("/events/", payload);
@@ -150,7 +152,7 @@ export default function CreateEventCard() {
                             <div className="flex flex-col gap-1">
                                 <FormField 
                                     formName={ isMultiDay ? "Start Date" : "Date"} 
-                                    placeholder="02-01-2025" 
+                                    placeholder={placeholderStartDate} 
                                     value={startDate}
                                     onChange={setStartDate}
                                     width={150}
@@ -170,7 +172,7 @@ export default function CreateEventCard() {
                                 (
                                     <FormField
                                         formName="End Date"
-                                        placeholder="02-03-2025" 
+                                        placeholder={placeholderEndDate}
                                         value={endDate}
                                         onChange={setEndDate}
                                         formDependencies={[setStartTime, setEndTime]}
@@ -348,16 +350,17 @@ export default function CreateEventCard() {
                                     <span className="text-foreground/75 font-semibold">Note</span>
                                     <span className="text-metadata font-bold ml-1">*</span>
                                 </div>
+                                
                                 <div className="text-sm leading-snug">
                                     This event will be saved as <span className="font-semibold underline">scheduled</span> and RSVP will automatically open for users. To keep RSVP closed until later, uncheck the option below.
                                 </div>
-                                <div onClick={ () => setAutoOpenRSVP(prev => !prev) } className="flex items-center gap-2 w-fit group hover:cursor-pointer ">
-                                    <div className="w-[15px] h-[15px] outline-1 outline-muted-1 flex items-center justify-center group-hover:outline-primary">
-                                        {autoOpenRSVP && <SelectCheckIcon className="text-[0.5rem] text-foreground"/>}
-                                    </div>
-                                    <div className={`text-[0.825rem] select-none ${ autoOpenRSVP ? "text-foreground" : "text-foreground/50 line-through" }`}>
-                                        Automatically open RSVP
-                                    </div>
+
+                                <div className="text-[0.825rem] ">
+                                    <Checkbox
+                                        text="Automatically Open RSVP"
+                                        check={autoOpenRSVP}
+                                        onChange={setAutoOpenRSVP}
+                                    />
                                 </div>
                             </div>
 

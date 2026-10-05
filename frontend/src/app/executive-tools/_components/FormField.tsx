@@ -26,7 +26,7 @@ export default function FormField({ formName, placeholder, required = false, wid
             <div className="font-medium text-foreground/75">
                 <span className={` ${ formName ? "select-none" : "invisible"} `}>{ formName ? formName : "invisible" }</span>
                 { required && (
-                    <span className="text-alert font-bold ml-1">*</span>
+                    <span className="text-alert font-bold ml-1 select-none">*</span>
                 ) }
                 
             </div>

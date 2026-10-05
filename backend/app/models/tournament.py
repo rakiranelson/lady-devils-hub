@@ -10,6 +10,7 @@ from app.models.tournament_registration import TournamentRegistration
 from datetime import datetime
 
 from app.models.event import Event
+from app.core.timezone import LOCAL_TZ
 
 
 class Tournament(Base):
@@ -82,7 +83,7 @@ def add_tournament(
     registration_deadline = datetime.strptime(
         f"{registration_deadline_date} {registration_deadline_time}",
         "%m-%d-%Y %I:%M %p",
-    )
+    ).replace(tzinfo=LOCAL_TZ)
 
     new = Tournament(
         id=event_id,

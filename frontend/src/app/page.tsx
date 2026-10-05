@@ -15,35 +15,7 @@ import Link from "next/link";
 
 export default function Home() {
 
-/* call a function to fetch the announcements with most recent created time coming first */
-  const announcements: AnnouncementProps[]= [
-          {
-              id: 3,
-              content: "Tournament RSVP posted",
-              expiresAt: "Sep 10",
-              createdBy: "Ra'Kira Nelson",
-              pinned: true,
-              createdTime: "6 hours ago"
-          },
-  
-          {
-              id: 2,
-              content: "Complete waiver before Saturday scrimmage. Players without completed waivers cannot participate.",
-              expiresAt: "Sep 03",
-              createdBy: "Ra'Kira Nelson",
-              pinned: false,
-              createdTime: "4 days ago"
-          },
-  
-          {
-              id: 1,
-              content: "Practice location poll posted",
-              expiresAt: "Sep 04",
-              createdBy: "Ra'Kira Nelson",
-              pinned: false,
-              createdTime: "1 week ago"
-          },
-      ];
+
   /* call a function to fetch the events with earliest date  from today) first */
 
   const events: Event[] = [
@@ -219,7 +191,7 @@ export default function Home() {
       <Header title="Overview" semester={ semester }/>
       
       <div className="w-full max-w-[1050px] mx-auto px-5 mt-2 overflow-y-auto scrollbar-gutter-auto mb-2">
-        <AnnouncementContainer announcementList={ announcements }/>
+        <AnnouncementContainer/>
 
         <div className="mt-3 sm:text-lg">
           <div className="flex">

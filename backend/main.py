@@ -4,10 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 
 from app.routers.events import router as events_router
+from app.routers.announcements import router as announcements_router
 
 app = FastAPI()
 
 app.include_router(events_router)
+app.include_router(announcements_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -13,23 +13,21 @@ from app.models.event import (
     GenericEventDetailedResponse,
     format_event_data,
 )
-from app.models.semester import Semester
 from app.models.app_config import get_current_semester_id
 from app.models.practice import (
-    Practice,
     PracticeResponse,
     PracticeDetailedResponse,
     get_practice_type,
     add_practice,
 )
 from app.models.tournament import (
-    Tournament,
     TournamentResponse,
     TournamentDetailedResponse,
     get_tournament,
     add_tournament,
 )
 from app.models.rsvp_submission import get_rsvp_response
+from app.core.timezone import LOCAL_TZ
 
 
 class EventCreate(BaseModel):
@@ -133,20 +131,24 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
     if event.is_multi_day:
         # multi day events
         if event.start_date:
-            start_datetime = datetime.strptime(event.start_date, "%m-%d-%Y")
+            start_datetime = datetime.strptime(event.start_date, "%m-%d-%Y").replace(
+                tzinfo=LOCAL_TZ
+            )
         if event.end_date:
-            end_datetime = datetime.strptime(event.end_date, "%m-%d-%Y")
+            end_datetime = datetime.strptime(event.end_date, "%m-%d-%Y").replace(
+                tzinfo=LOCAL_TZ
+            )
 
     else:
         # single day events
         if event.start_date and event.start_time:
             start_datetime = datetime.strptime(
                 f"{event.start_date} {event.start_time}", "%m-%d-%Y %I:%M %p"
-            )
+            ).replace(tzinfo=LOCAL_TZ)
         if event.start_date and event.end_time:
             end_datetime = datetime.strptime(
                 f"{event.start_date} {event.end_time}", "%m-%d-%Y %I:%M %p"
-            )
+            ).replace(tzinfo=LOCAL_TZ)
 
     if (not event.is_multi_day and event.end_date) or (
         event.is_multi_day and (event.start_time or event.end_time)
