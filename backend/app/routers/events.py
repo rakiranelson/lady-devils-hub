@@ -1,7 +1,8 @@
 from pydantic import BaseModel, ConfigDict
-from fastapi import APIRouter, Depends, HTTPException
+from pydantic.alias_generators import to_camel
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Optional, Literal
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.db.connection import get_db
 from sqlalchemy.orm import Session
@@ -12,6 +13,7 @@ from app.models.event import (
     GenericEventResponse,
     GenericEventDetailedResponse,
     format_event_data,
+    format_date_time,
 )
 from app.models.app_config import get_current_semester_id
 from app.models.practice import (
@@ -19,12 +21,17 @@ from app.models.practice import (
     PracticeDetailedResponse,
     get_practice_type,
     add_practice,
+    delete_practice,
+    update_practice,
 )
 from app.models.tournament import (
     TournamentResponse,
     TournamentDetailedResponse,
     get_tournament,
     add_tournament,
+    get_tournament_type,
+    delete_tournament,
+    update_tournament,
 )
 from app.models.rsvp_submission import get_rsvp_response
 from app.core.timezone import LOCAL_TZ
@@ -54,12 +61,44 @@ class EventCreateResponse(BaseModel):
     id: int
 
 
+class EventEditResponse(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, validate_by_name=True)
+
+    id: int
+    name: str
+    category: Literal["practice", "tournament", "game", "other"]
+    location_name: str
+    location_address: str
+    details: str
+    start_date: str
+    end_date: str
+    start_time: str
+    end_time: str
+    event_type: str
+    additional_requirements: list[str]
+    registration_deadline_date: str
+    registration_deadline_time: str
+    is_multi_day: bool
+    rsvp_open: bool
+
+
 EventResponse = PracticeResponse | TournamentResponse | GenericEventResponse
 DetailedEventResponse = (
     PracticeDetailedResponse | TournamentDetailedResponse | GenericEventDetailedResponse
 )
 
 router = APIRouter(prefix="/events", tags=["events"])
+
+
+def get_event_type(event_id, category, db):
+    event_type = ""
+
+    if category == "practice":
+        event_type = get_practice_type(event_id, db=db)
+    if category == "tournament":
+        event_type = get_tournament_type(event_id, db=db)
+
+    return event_type.lower()
 
 
 def get_event_response_object(event, current_user, db: Session):
@@ -93,9 +132,9 @@ def get_event_response_object(event, current_user, db: Session):
         event_response_base["deadline_label"] = deadline_label
         event_response_base["deadline"] = deadline
         event_response_base["group_transportation_required"] = tournament[
-            "group_transportation_required"
+            "group_transportation"
         ]
-        event_response_base["lodging_required"] = tournament["lodging_required"]
+        event_response_base["lodging_required"] = tournament["lodging"]
 
         return event_response_base
 
@@ -104,15 +143,7 @@ def get_event_response_object(event, current_user, db: Session):
     )
 
 
-@router.post("/", response_model=EventCreateResponse)
-def create_event(event: EventCreate, db: Session = Depends(get_db)):
-
-    # get current semester_id
-    semester_id = get_current_semester_id(db)
-
-    # get current user
-    current_user = 1
-
+def match_db_format(event):
     is_tentative = (
         event.start_date is None
         or (event.location_name is None and event.location_address is None)
@@ -160,17 +191,41 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
             detail="The event data does not match the expected structure for its type.",
         )
 
+    return {
+        "name": event.name,
+        "category": event.category,
+        "location_name": event.location_name,
+        "location_address": event.location_address,
+        "event_details": event.details,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "rsvp_open": event.rsvp_open,
+        "event_status": event_status,
+    }
+
+
+@router.post("/", response_model=EventCreateResponse)
+def create_event(event: EventCreate, db: Session = Depends(get_db)):
+
+    # get current semester_id
+    semester_id = get_current_semester_id(db)
+
+    # get current user
+    current_user = 1
+
+    event_dict = match_db_format(event)
+
     new = Event(
-        name=event.name,
+        name=event_dict["name"],
         semester_id=semester_id,
-        category=event.category,
-        location_name=event.location_name,
-        location_address=event.location_address,
-        event_details=event.details,
-        start_datetime=start_datetime,
-        end_datetime=end_datetime,
-        rsvp_open=event.rsvp_open,
-        event_status=event_status,
+        category=event_dict["category"],
+        location_name=event_dict["location_name"],
+        location_address=event_dict["location_address"],
+        event_details=event_dict["event_details"],
+        start_datetime=event_dict["start_datetime"],
+        end_datetime=event_dict["end_datetime"],
+        rsvp_open=event_dict["rsvp_open"],
+        event_status=event_dict["event_status"],
         created_by=current_user,
     )
 
@@ -218,6 +273,29 @@ def get_events(db: Session = Depends(get_db)):
     return event_list
 
 
+@router.get("/overview", response_model=list[EventResponse])
+def get_n_upcoming_events(limit: int, db: Session = Depends(get_db)):
+    event_list = []
+
+    events = db.scalars(
+        select(Event)
+        .where(
+            Event.event_status == "scheduled",
+            Event.end_datetime > datetime.now(timezone.utc),
+        )
+        .order_by(Event.start_datetime)
+        .limit(limit)
+    ).all()
+
+    current_user = 1
+
+    for event in events:
+        event_response = get_event_response_object(event, current_user, db)
+        event_list.append(event_response)
+
+    return event_list
+
+
 @router.get("/{event_id}", response_model=DetailedEventResponse)
 def get_event_details(event_id: int, db: Session = Depends(get_db)):
     event = db.scalar(select(Event).where(Event.id == event_id))
@@ -232,3 +310,135 @@ def get_event_details(event_id: int, db: Session = Depends(get_db)):
     event_response["details"] = event.event_details or "N/A"
 
     return event_response
+
+
+@router.get("/{event_id}/form-responses", response_model=EventEditResponse)
+def get_event_form_responses(event_id: int, db: Session = Depends(get_db)):
+    event = db.scalar(select(Event).where(Event.id == event_id))
+    current_user = 1
+
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    start_date, end_date, start_time, end_time, is_multi_day = format_date_time(event)
+    event_type = get_event_type(event.id, event.category, db)
+
+    registration_deadline_date = ""
+    registration_deadline_time = ""
+    additional_requirements = []
+
+    if event.category == "tournament":
+        tournament_details = get_tournament(event.id, current_user, db=db)
+        deadline = tournament_details["registration_deadline"]
+
+        if deadline is not None:
+            registration_deadline_date = deadline.strftime("%m-%d-%Y")
+            registration_deadline_time = deadline.strftime("%I:%M %p").lstrip("0")
+
+        requirements = [
+            "group_transportation",
+            "lodging",
+        ]  # any additional ones should be added here
+
+        for k, v in tournament_details.items():
+            if k in requirements and v is True:
+                additional_requirements.append(k)
+
+    return {
+        "id": event.id,
+        "name": event.name,
+        "category": event.category,
+        "location_name": event.location_name or "",
+        "location_address": event.location_address or "",
+        "details": event.event_details or "",
+        "start_date": start_date,
+        "end_date": end_date,
+        "start_time": start_time,
+        "end_time": end_time,
+        "event_type": event_type,
+        "additional_requirements": additional_requirements,
+        "registration_deadline_date": registration_deadline_date,
+        "registration_deadline_time": registration_deadline_time,
+        "is_multi_day": is_multi_day,
+        "rsvp_open": event.rsvp_open,
+    }
+
+
+@router.patch("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
+def get_event_details(
+    event_id: int, updated_event: EventCreate, db: Session = Depends(get_db)
+):
+    event = db.scalar(select(Event).where(Event.id == event_id))
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    event_dict = match_db_format(updated_event)
+
+    old_category = event.category
+    new_category = event_dict["category"]
+
+    if old_category != new_category:
+        if old_category == "practice":
+            delete_practice(event_id, db)
+        if old_category == "tournament":
+            delete_tournament(event_id, db)
+
+        if new_category == "practice":
+            add_practice(event_id, updated_event.event_type, db)
+        if new_category == "tournament":
+            add_tournament(
+                event_id,
+                updated_event.event_type,
+                updated_event.additional_requirements,
+                updated_event.registration_deadline_date,
+                updated_event.registration_deadline_time,
+                db,
+            )
+    else:
+        if new_category == "practice":
+            update_practice(event.id, updated_event.event_type, db)
+
+        if new_category == "tournament":
+            update_tournament(
+                event.id,
+                updated_event.event_type,
+                updated_event.additional_requirements,
+                updated_event.registration_deadline_date,
+                updated_event.registration_deadline_time,
+                db,
+            )
+
+    # update event
+    event.name = event_dict["name"]
+    event.category = event_dict["category"]
+    event.location_name = event_dict["location_name"]
+    event.location_address = event_dict["location_address"]
+    event.event_details = event_dict["event_details"]
+    event.start_datetime = event_dict["start_datetime"]
+    event.end_datetime = event_dict["end_datetime"]
+    event.rsvp_open = event_dict["rsvp_open"]
+    event.event_status = event_dict["event_status"]
+
+    db.commit()
+
+
+@router.patch("/{event_id}/cancel", status_code=status.HTTP_204_NO_CONTENT)
+def get_event_details(event_id: int, db: Session = Depends(get_db)):
+    event = db.scalar(select(Event).where(Event.id == event_id))
+
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    event.event_status = "canceled"
+    db.commit()
+
+
+@router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
+def get_event_details(event_id: int, db: Session = Depends(get_db)):
+    event = db.scalar(select(Event).where(Event.id == event_id))
+
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    db.delete(event)
+    db.commit()

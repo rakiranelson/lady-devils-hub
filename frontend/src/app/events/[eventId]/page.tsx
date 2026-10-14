@@ -43,6 +43,7 @@ export default function FullEvent({ params }: { params: Promise<{ eventId: strin
     return (
         <div className="flex h-full contents">
             <div className="flex flex-1 min-w-0 h-full items-center py-12 px-8">
+            
             { event.category === "practice" && 
                 <PracticeDetails { ...event }/> 
             }

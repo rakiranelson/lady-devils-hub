@@ -18,6 +18,8 @@ export default function SeasonFilter({ season, onChange, seasons }: FilterProps)
 
     // close when clicking outside
     useEffect(() => {
+        if (isOpen) return;
+        
         const handleOutsideClick = (e: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
                 setIsOpen(false);
@@ -25,7 +27,7 @@ export default function SeasonFilter({ season, onChange, seasons }: FilterProps)
         };
         document.addEventListener("mousedown", handleOutsideClick);
         return () => document.removeEventListener("mousedown", handleOutsideClick);
-    }, []);
+    }, [isOpen]);
 
     // close on escape
     useEffect(() => {

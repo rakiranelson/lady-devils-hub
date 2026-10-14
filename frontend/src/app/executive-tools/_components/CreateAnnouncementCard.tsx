@@ -4,16 +4,24 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FormCard, Option } from "./FormCard";
 import FormField from "./FormField";
-import FormMultiSelect from "./FormMultiSelect";
-import FormSingleSelect from "./FormSingleSelect";
-import FormToggle from "./FormToggle";
-import NoticeIcon from "@/assets/icons/notice.svg";
 import Checkbox from "./Checkbox";
 
 import api from "@/lib/api";
 import getFormattedDate from "@/lib/getFormattedDate";
 
-export default function CreateAnnouncementCard() {
+export type OldAnnouncement = {
+    id: number,
+    content: string,
+    expirationDate: string,
+    expirationTime: string,
+    pinned: boolean,
+};
+
+type Props = {
+    oldAnnouncement?: OldAnnouncement;
+};
+
+export function CreateAnnouncementCard({ oldAnnouncement }: Props) {
 
     const router = useRouter();
     const [error, setError] = useState<string>("");
@@ -22,10 +30,11 @@ export default function CreateAnnouncementCard() {
     const placeholderDate = getFormattedDate(7);
 
     // page 1 form fields
-    const [content, setContent] = useState<string>("");
-    const [expirationDate, setExpirationDate] = useState<string>("");
-    const [expirationTime, setExpirationTime] = useState<string>("");
-    const [pinned, setPinned] = useState<boolean>(false);
+    const [content, setContent] = useState<string>(oldAnnouncement?.content ?? "");
+    const [expirationDate, setExpirationDate] = useState<string>(oldAnnouncement?.expirationDate ?? "");
+    const [expirationTime, setExpirationTime] = useState<string>(oldAnnouncement?.expirationTime ?? "");
+    const [pinned, setPinned] = useState<boolean>(oldAnnouncement?.pinned ?? false);
+
 
     const handleCancel = () => {
         router.back();
@@ -41,7 +50,7 @@ export default function CreateAnnouncementCard() {
             console.log("blocked by missing fields", missingFields);
             setError(`Please fill in: ${missingFields.join(", ")}`);
             return;
-        }    
+        }
         
         const payload = {
             content: content,
@@ -51,12 +60,23 @@ export default function CreateAnnouncementCard() {
         };
 
         try {
-            await api.post("/announcements/", payload);
-            router.push("/");
+            if (oldAnnouncement?.id) {
+                console.log("Updating announcement...")
+                await api.patch(`/announcements/${oldAnnouncement.id}`, payload);
+                window.dispatchEvent(new Event("announcement-updated"));
+                router.back();
+            } else {
+                console.log("Creating announcement...")
+                await api.post("/announcements/", payload);
+                window.dispatchEvent(new Event("announcement-created"));
+                router.push("/");
+            }
         } catch (err) {
             console.error(err)
-            setSubmitError("Something went wrong while creating the announcement. Please try again.")
+            setSubmitError("Something went wrong while creating/updating the announcement. Please try again.")
         }
+        
+        
     };
 
     useEffect(() => {
@@ -64,7 +84,7 @@ export default function CreateAnnouncementCard() {
     }, [content, expirationDate, expirationTime]);
 
     return (
-        <FormCard cardTitle="Create Announcement">
+        <FormCard cardTitle={ oldAnnouncement?.id ?"Update Announcement" : "Create Announcement" }>
 
               <>
                 <div className="flex flex-col gap-3 pb-5 border-b-1 border-muted-1/30">
@@ -108,14 +128,13 @@ export default function CreateAnnouncementCard() {
                 )}
 
                 <div className="mt-auto mb-1 flex gap-5 items-center text-lg select-none">
-                    <button onClick={ handleSubmit } className={`flex-1 font-semibold rounded-[3.5px] p-[6px] bg-primary hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>Submit</button>
+                    <button onClick={ handleSubmit } className={`flex-1 font-semibold rounded-[3.5px] p-[6px] bg-primary hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>{ oldAnnouncement?.id ?"Update" : "Submit" }</button>
                     <button onClick={ handleCancel } className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
                 </div>
                
               </>
 
         </FormCard>    
-
             
     )
 };

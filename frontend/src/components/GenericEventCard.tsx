@@ -20,6 +20,7 @@ import LocationIcon from "@/assets/icons/location.svg";
 
 import { RVSPList } from "./events/RSVPList";
 import RSVPChip from "./events/RSVPChip";
+import EventEllipsis from "./EventEllipsis";
 export type EventProps = {
     id: number;
     eventName: string;
@@ -47,34 +48,44 @@ export type ExtendedEventProps = {
     details: string;
 };
 
-export function GenericEventCard(event : EventProps) {
+export function GenericEventCard(event : EventProps & { onRefetch: () => void }) {
+    const isExec = useContext(UserContext)?.exec;
+    
     return (
-        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200 select-none">
+        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259]  flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200 select-none group relative">
         
-                    <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative">
+            <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative">
 
-                        { event.category === "game" && (
-                            <Image
-                                className="object-cover object-[30%_70%] opacity-40"
-                                src="/solo-game.png"
-                                alt="Game Banner"
-                                fill={ true }
-                                priority
-                            />
-                        )}
+                { event.category === "game" && (
+                    <Image
+                        className="object-cover object-[30%_70%] opacity-40"
+                        src="/solo-game.png"
+                        alt="Game Banner"
+                        fill={ true }
+                        priority
+                    />
+                )}
 
-                        { event.category != "game" && (
-                            <Image
-                                className="object-cover object-[30%_30%] opacity-40"
-                                src="/community.jpg"
-                                alt="Community Banner"
-                                fill={ true }
-                                priority
-                            />
-                        )}
-                        
-                        
-                    </div>
+                { event.category != "game" && (
+                    <Image
+                        className="object-cover object-[30%_30%] opacity-40"
+                        src="/community.jpg"
+                        alt="Community Banner"
+                        fill={ true }
+                        priority
+                    />
+                )}
+                
+            </div>
+
+            <div className="absolute right-1 opacity-25 group-hover:opacity-100 transition-all">
+                { isExec && (
+                    <EventEllipsis 
+                        eventId={event.id} 
+                        onRefetch={event.onRefetch}
+                    />
+                )}
+            </div>
 
             <div className="px-3 pt-2">
                 <div>
@@ -120,7 +131,7 @@ export function GenericEventCard(event : EventProps) {
     );
 };
 
-export function EventDetails(event : ExtendedEventProps) {
+export function EventDetails(event : ExtendedEventProps & { onRefetch: () => void }) {
     
     const semester = useContext(SemesterContext);
     const isExec = useContext(UserContext)?.exec;
@@ -147,7 +158,7 @@ export function EventDetails(event : ExtendedEventProps) {
     const scrollContainer = useRef<HTMLDivElement>(null);
 
     return (
-        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
+        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card group relative ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
             <div className="w-full h-1/8 rounded-t-[18px] overflow-hidden relative select-none">
                 <Image
                     className="object-cover object-[30%_60%] opacity-40"
@@ -158,75 +169,81 @@ export function EventDetails(event : ExtendedEventProps) {
                 />
             </div>
 
-                <div className="h-full px-7 pt-2 flex flex-col min-h-0">
-                    
-                    <div className="flex-none">
-                        <div className="text-[min(2.1rem,5vw)] font-bold truncate" title="">
-                            { event.eventName }
-                        </div>
+            <div className="absolute right-1 opacity-25 group-hover:opacity-100 transition-all mt-2 mr-2">
+                { isExec && (
+                    <EventEllipsis 
+                        eventId={event.id} 
+                        onRefetch={event.onRefetch} 
+                        fullEvent={true}
+                    />
+                )}
+            </div>
 
-                        <div className="-mt-2 flex justify-between mb-1 text-base">
-                            <span className="text-metadata text-[min(1.2rem,2.6vw)] truncate font-medium">{ semester }</span>
-
-                            { (event.response === "yes" || event.response === "maybe" || event.response === "no") ?
-                                ( <RSVPChip response={ event.response }/> ) : 
-                                ( <Button title="RSVP Now" width={100} /> )
-                            }
-                            
-                        </div>
+            <div className="h-full px-7 pt-2 flex flex-col min-h-0">
+                
+                <div className="flex-none">
+                    <div className="text-[min(2.1rem,5vw)] font-bold truncate" title="">
+                        { event.eventName }
                     </div>
 
-                    <div ref={ scrollContainer } className="flex-1 min-h-0 overflow-y-auto flex flex-col">
-                        <div className="flex gap-5 justify-center mt-4 mb-4">
-                            <InfoCard 
-                                icon={ <CalendarIcon className="text-foreground text-[2.2rem]"/> }
-                                label={ event.dateLabel }
-                                details={ event.time }
-                            />
-                            <InfoCard 
-                                icon={ <LocationIcon className="text-foreground text-[2.2rem] overflow-visible"/> }
-                                label={ event.locationName }
-                                details={ event.locationAddress }
-                            />
-                        </div>
+                    <div className="-mt-2 flex justify-between mb-1 text-base">
+                        <span className="text-metadata text-[min(1.2rem,2.6vw)] truncate font-medium">{ semester }</span>
+
+                        { (event.response === "yes" || event.response === "maybe" || event.response === "no") ?
+                            ( <RSVPChip response={ event.response }/> ) : 
+                            ( <Button title="RSVP Now" width={100} /> )
+                        }
                         
-                        <div ref={ detailsWrapperRef } className={` mt-1 ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
-                            <DetailsContainer content={ event.details }/>
-                        </div>
+                    </div>
+                </div>
 
-                        { event.response !== null && (
-                            <div className="flex-none mt-4 pb-1">
-                            { isExec && (
-                                <RVSPList 
-                                    label="Responses" 
-                                    handleRSVPOpen={ handleRSVPOpen }
-                                    handleRSVPClose={ handleRSVPClose }
-                                    pageScrollRef={ scrollContainer }
-                                    maxHeight={ RSVPHeight }/>
-                            )}
+                <div ref={ scrollContainer } className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+                    <div className="flex gap-5 justify-center mt-4 mb-4">
+                        <InfoCard 
+                            icon={ <CalendarIcon className="text-foreground text-[2.2rem]"/> }
+                            label={ event.dateLabel }
+                            details={ event.time }
+                        />
+                        <InfoCard 
+                            icon={ <LocationIcon className="text-foreground text-[2.2rem] overflow-visible"/> }
+                            label={ event.locationName }
+                            details={ event.locationAddress }
+                        />
+                    </div>
+                    
+                    <div ref={ detailsWrapperRef } className={` mt-1 ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
+                        <DetailsContainer content={ event.details }/>
+                    </div>
 
-                            { !isExec && (
-                                <RVSPList label="Attendees" handleRSVPOpen={ handleRSVPOpen } handleRSVPClose={ handleRSVPClose }
+                    { event.response !== null && (
+                        <div className="flex-none mt-4 pb-1">
+                        { isExec && (
+                            <RVSPList 
+                                label="Responses" 
+                                handleRSVPOpen={ handleRSVPOpen }
+                                handleRSVPClose={ handleRSVPClose }
                                 pageScrollRef={ scrollContainer }
                                 maxHeight={ RSVPHeight }/>
-                            )}   
-                        </div>
                         )}
 
+                        { !isExec && (
+                            <RVSPList label="Attendees" handleRSVPOpen={ handleRSVPOpen } handleRSVPClose={ handleRSVPClose }
+                            pageScrollRef={ scrollContainer }
+                            maxHeight={ RSVPHeight }/>
+                        )}   
                     </div>
-
-
-                        <div className="flex text-[min(0.875rem,2.5vw)] mb-3">
-                            <div className="flex items-center h-[28px] ml-auto">
-                                <GoBack title="Back" color="muted-2"/>
-                            </div>
-                        </div>
-
+                    )}
 
                 </div>
-            
-            
 
+
+                    <div className="flex text-[min(0.875rem,2.5vw)] mb-3">
+                        <div className="flex items-center h-[28px] ml-auto">
+                            <GoBack title="Back" color="muted-2"/>
+                        </div>
+                    </div>
+
+            </div>
         </div>
     );
 };

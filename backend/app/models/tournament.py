@@ -39,6 +39,11 @@ class TournamentDetailedResponse(TournamentResponse):
     lodging_required: bool
 
 
+def get_tournament_type(event_id, db: Session):
+    tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
+    return tournament.tournament_type.capitalize()
+
+
 def get_tournament(event_id, user_id, db: Session):
     tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
 
@@ -62,8 +67,8 @@ def get_tournament(event_id, user_id, db: Session):
         "tournament_type": tournament_type,
         "is_registered": is_registered,
         "registration_deadline": registration_deadline,
-        "group_transportation_required": group_transportation_required,
-        "lodging_required": lodging_required,
+        "group_transportation": group_transportation_required,
+        "lodging": lodging_required,
     }
 
 
@@ -96,3 +101,37 @@ def add_tournament(
     db.add(new)
     db.commit()
     db.refresh(new)
+
+
+def delete_tournament(event_id: int, db: Session):
+    tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
+    if tournament:
+        db.delete(tournament)
+
+
+def update_tournament(
+    event_id,
+    tournament_type,
+    additional_requirements,
+    registration_deadline_date,
+    registration_deadline_time,
+    db: Session,
+):
+    tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
+
+    group_transportation_required = (
+        True if "group_transportation" in additional_requirements else False
+    )
+    lodging_required = True if "lodging" in additional_requirements else False
+
+    registration_deadline = datetime.strptime(
+        f"{registration_deadline_date} {registration_deadline_time}",
+        "%m-%d-%Y %I:%M %p",
+    ).replace(tzinfo=LOCAL_TZ)
+
+    tournament.tournament_type = tournament_type
+    tournament.registration_deadline = registration_deadline
+    tournament.group_transportation_required = group_transportation_required
+    tournament.lodging_required = lodging_required
+
+    db.commit()

@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { SemesterContext } from "@/contexts/SemesterContext";
 import useScrollFade from "@/hooks/useScrollFade";
-import CreateEventCard from "../../_components/CreateEventCard";
+import { CreateEventCard } from "../../_components/CreateEventCard";
 
 export default function CreateEvent() {
 

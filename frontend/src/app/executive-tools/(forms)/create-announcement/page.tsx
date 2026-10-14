@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { SemesterContext } from "@/contexts/SemesterContext";
 import useScrollFade from "@/hooks/useScrollFade";
-import CreateAnnouncementCard from "../../_components/CreateAnnouncementCard";
+import { CreateAnnouncementCard } from "../../_components/CreateAnnouncementCard";
 
 export default function CreateAnnouncement() {
 

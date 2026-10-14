@@ -20,6 +20,7 @@ import LocationIcon from "@/assets/icons/location.svg";
 
 import { RVSPList } from "./events/RSVPList";
 import RSVPChip from "./events/RSVPChip";
+import EventEllipsis from "./EventEllipsis";
 
 export type PracticeProps = {
     id: number;
@@ -52,9 +53,11 @@ export type ExtendedPracticeProps = {
 };
 
 
-export function PracticeCard(practice : PracticeProps) {  
+export function PracticeCard(practice : PracticeProps & { onRefetch: () => void }) {  
+    const isExec = useContext(UserContext)?.exec;
+    
     return (
-        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259] flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200">
+        <div className="max-w-[260px] md:max-w-[304px] aspect-[304/259] flex flex-col text-sm bg-card rounded-[18px] hover:scale-102 transition-transform duration-200 group relative">
 
             <div className="w-full h-2/9 rounded-t-[18px] overflow-hidden relative select-none">
                 <Image
@@ -64,53 +67,61 @@ export function PracticeCard(practice : PracticeProps) {
                     fill={ true }
                     priority
                 />
-                
             </div>
 
-                <div className="px-3 pt-2">
-                    <div>
-                    <div className="text-[min(1.3rem,3.5vw)] font-semibold truncate" title="">
-                            { practice.eventName }
-                        </div>
+            <div className="absolute right-1 opacity-25 group-hover:opacity-100 transition-all">
+                { isExec && (
+                    <EventEllipsis 
+                        eventId={practice.id}
+                        onRefetch={practice.onRefetch}
+                    />
+                )}
+            </div>
 
-                        <div className="text-metadata text-[min(0.875rem,2.5vw)] -mt-1 truncate">
-                            { practice.practiceType }
-                        </div>
-
-                        <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
-                            <CalendarIcon className="overflow-visible"/>
-                            <span className="truncate">{ practice.dateLabel }</span>
-                        </div>
-
-                        <div className="text-[min(1rem,3vw)] flex items-center gap-2">
-                            <TimeIcon className="overflow-visible"/>
-                            <span className="truncate">{ practice.time }</span>
-                        </div>
-
-                        <div className="text-[min(1rem,3vw)] truncate flex items-center gap-2">
-                            <LocationIcon className="overflow-visible"/>
-                            <span className="truncate">{ practice.locationName }</span>
-                        </div>
-
-                        <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.5vw)]">
-                            { (practice.response === "yes" || practice.response === "maybe" || practice.response === "no") ?
-                                ( <RSVPChip response={ practice.response } hiddenEdit={true}/> ) : 
-                                ( <Button title="RSVP Now"/> )
-                            }
-
-                            <div className="flex items-center h-[28px]">
-                                <MoreDetails title="Details" href={`/events/${practice.id}`} color="muted-2"/>
-                            </div>
-                        </div>
-
+            <div className="px-3 pt-2">
+                <div>
+                <div className="text-[min(1.3rem,3.5vw)] font-semibold truncate" title="">
+                        { practice.eventName }
                     </div>
+
+                    <div className="text-metadata text-[min(0.875rem,2.5vw)] -mt-1 truncate">
+                        { practice.practiceType }
+                    </div>
+
+                    <div className="text-[min(1rem,3vw)] mt-2 flex items-center gap-2">
+                        <CalendarIcon className="overflow-visible"/>
+                        <span className="truncate">{ practice.dateLabel }</span>
+                    </div>
+
+                    <div className="text-[min(1rem,3vw)] flex items-center gap-2">
+                        <TimeIcon className="overflow-visible"/>
+                        <span className="truncate">{ practice.time }</span>
+                    </div>
+
+                    <div className="text-[min(1rem,3vw)] truncate flex items-center gap-2">
+                        <LocationIcon className="overflow-visible"/>
+                        <span className="truncate">{ practice.locationName }</span>
+                    </div>
+
+                    <div className="flex flex-wrap justify-between mt-4 sm:mt-7 pb-4 text-[min(0.875rem,2.5vw)]">
+                        { (practice.response === "yes" || practice.response === "maybe" || practice.response === "no") ?
+                            ( <RSVPChip response={ practice.response } hiddenEdit={true}/> ) : 
+                            ( <Button title="RSVP Now"/> )
+                        }
+
+                        <div className="flex items-center h-[28px]">
+                            <MoreDetails title="Details" href={`/events/${practice.id}`} color="muted-2"/>
+                        </div>
+                    </div>
+
                 </div>
+            </div>
 
         </div>
     );
 };
 
-export function PracticeDetails(practice : ExtendedPracticeProps) {
+export function PracticeDetails(practice : ExtendedPracticeProps & { onRefetch: () => void }) {
 
     const semester = useContext(SemesterContext);
     const isExec = useContext(UserContext)?.exec;
@@ -137,7 +148,7 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
     const scrollContainer = useRef<HTMLDivElement>(null);
 
     return (
-        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
+        <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col text-sm bg-card rounded-[18px] shadow-large-card group relative ${isModal ? "animate-grow" : ""}`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
             <div className="w-full h-1/8 rounded-t-[18px] overflow-hidden relative select-none">
                 <Image
                     className="object-cover object-[30%_60%] opacity-40"
@@ -148,73 +159,82 @@ export function PracticeDetails(practice : ExtendedPracticeProps) {
                 />
             </div>
 
-                <div className="h-full px-7 pt-2 flex flex-col min-h-0">
-                    
-                    <div className="flex-none">
-                        <div className="text-[min(2.1rem,5vw)] font-bold truncate" title="">
-                            { practice.eventName }
-                        </div>
+            <div className="absolute right-1 opacity-25 group-hover:opacity-100 transition-all mt-2 mr-2">
+                { isExec && (
+                    <EventEllipsis 
+                    eventId={practice.id}
+                    onRefetch={practice.onRefetch} 
+                    fullEvent={true}
+                    />
+                )}
+                
+            </div>
 
-                        <div className="-mt-2 flex justify-between mb-1 text-base">
-                            <span className="text-metadata text-[min(1.2rem,2.6vw)] truncate font-medium">{ semester } - { practice.practiceType }</span>
-
-                            { (practice.response === "yes" || practice.response === "maybe" || practice.response === "no") ?
-                                ( <RSVPChip response={ practice.response }/> ) : 
-                                ( <Button title="RSVP Now" width={100} /> )
-                            }
-                            
-                        </div>
+            <div className="h-full px-7 pt-2 flex flex-col min-h-0">
+                
+                <div className="flex-none">
+                    <div className="text-[min(2.1rem,5vw)] font-bold truncate" title="">
+                        { practice.eventName }
                     </div>
 
-                    <div ref={ scrollContainer } className="flex-1 min-h-0 overflow-y-auto flex flex-col">
-                        <div className="flex gap-5 justify-center mt-4 mb-4">
-                            <InfoCard 
-                                icon={ <CalendarIcon className="text-foreground text-[2.2rem]"/> }
-                                label={ practice.dateLabel }
-                                details={ practice.time }
-                            />
-                            <InfoCard 
-                                icon={ <LocationIcon className="text-foreground text-[2.2rem] overflow-visible"/> }
-                                label={ practice.locationName }
-                                details={ practice.locationAddress }
-                            />
-                        </div>
+                    <div className="-mt-2 flex justify-between mb-1 text-base">
+                        <span className="text-metadata text-[min(1.2rem,2.6vw)] truncate font-medium">{ semester } - { practice.practiceType }</span>
+
+                        { (practice.response === "yes" || practice.response === "maybe" || practice.response === "no") ?
+                            ( <RSVPChip response={ practice.response }/> ) : 
+                            ( <Button title="RSVP Now" width={100} /> )
+                        }
                         
-                        <div ref={ detailsWrapperRef } className={` mt-1 ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
-                            <DetailsContainer content={ practice.details }/>
-                        </div>
+                    </div>
+                </div>
 
-                        { practice.response !== null && (
-                            <div className="flex-none mt-4 pb-1">
-                            { isExec && (
-                                <RVSPList 
-                                    label="Responses" 
-                                    handleRSVPOpen={ handleRSVPOpen }
-                                    handleRSVPClose={ handleRSVPClose }
-                                    pageScrollRef={ scrollContainer }
-                                    maxHeight={ RSVPHeight }/>
-                            )}
+                <div ref={ scrollContainer } className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+                    <div className="flex gap-5 justify-center mt-4 mb-4">
+                        <InfoCard 
+                            icon={ <CalendarIcon className="text-foreground text-[2.2rem]"/> }
+                            label={ practice.dateLabel }
+                            details={ practice.time }
+                        />
+                        <InfoCard 
+                            icon={ <LocationIcon className="text-foreground text-[2.2rem] overflow-visible"/> }
+                            label={ practice.locationName }
+                            details={ practice.locationAddress }
+                        />
+                    </div>
+                    
+                    <div ref={ detailsWrapperRef } className={` mt-1 ${ frozenHeight === null ? "flex-1 min-h-0" : "flex-none"} overflow-hidden`} style={ frozenHeight !== null ? { height: frozenHeight } : undefined }>
+                        <DetailsContainer content={ practice.details }/>
+                    </div>
 
-                            { !isExec && (
-                                <RVSPList label="Attendees" handleRSVPOpen={ handleRSVPOpen } handleRSVPClose={ handleRSVPClose }
+                    { practice.response !== null && (
+                        <div className="flex-none mt-4 pb-1">
+                        { isExec && (
+                            <RVSPList 
+                                label="Responses" 
+                                handleRSVPOpen={ handleRSVPOpen }
+                                handleRSVPClose={ handleRSVPClose }
                                 pageScrollRef={ scrollContainer }
                                 maxHeight={ RSVPHeight }/>
-                            )}   
-                        </div>
                         )}
 
+                        { !isExec && (
+                            <RVSPList label="Attendees" handleRSVPOpen={ handleRSVPOpen } handleRSVPClose={ handleRSVPClose }
+                            pageScrollRef={ scrollContainer }
+                            maxHeight={ RSVPHeight }/>
+                        )}   
                     </div>
-
-
-                        <div className="flex text-[min(0.875rem,2.5vw)] mb-3">
-                            <div className="flex items-center h-[28px] ml-auto">
-                                <GoBack title="Back" color="muted-2"/>
-                            </div>
-                        </div>
-
+                    )}
 
                 </div>
 
+
+                    <div className="flex text-[min(0.875rem,2.5vw)] mb-3">
+                        <div className="flex items-center h-[28px] ml-auto">
+                            <GoBack title="Back" color="muted-2"/>
+                        </div>
+                    </div>
+
+            </div>
         </div>
     );
 };

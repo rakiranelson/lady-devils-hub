@@ -71,7 +71,7 @@ CREATE TABLE events (
     
 
     CHECK (category IN ('practice', 'tournament', 'game', 'other')), -- game refers to a standalone game --
-    CHECK (event_status IN ('tentative', 'scheduled', 'cancelled'))
+    CHECK (event_status IN ('tentative', 'scheduled', 'canceled'))
 );
 
 CREATE TABLE user_availability (
@@ -158,14 +158,14 @@ CREATE TABLE rsvp_submissions (
 );
 
 CREATE TABLE practices (
-    id INT PRIMARY KEY REFERENCES events(id),
+    id INT PRIMARY KEY REFERENCES events(id) ON DELETE CASCADE,
     practice_type VARCHAR(50) NOT NULL DEFAULT 'regular',
 
     CHECK (practice_type IN ('regular', 'iq', 'conditioning', 'film', 'other'))
 );
 
 CREATE TABLE tournaments (
-    id INT PRIMARY KEY REFERENCES events(id),
+    id INT PRIMARY KEY REFERENCES events(id) ON DELETE CASCADE,
     tournament_type VARCHAR(50) NOT NULL,
     group_transportation_required BOOLEAN DEFAULT FALSE,
     lodging_required BOOLEAN DEFAULT FALSE,

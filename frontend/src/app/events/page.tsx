@@ -5,7 +5,7 @@ import { SemesterContext } from "@/contexts/SemesterContext"
 import Header from "@/components/Header";
 import EventToolBar from "./_components/EventToolBar";
 import { EventContainer, Event } from "@/components/EventContainer";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import useScrollFade from "@/hooks/useScrollFade";
 import ScrollTop from "@/components/ScrollTop";
 
@@ -14,6 +14,8 @@ import api from "@/lib/api";
 export default function Events() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const pathname = usePathname();
 
   const semester = useContext(SemesterContext);
   const [past, setPast] = useState(searchParams.get("past") === "true");
@@ -39,27 +41,37 @@ export default function Events() {
       params.set("type", filter )
     }
     router.push(`?${ params.toString() }`)
-  }
+  };
 
-   const [events, setEvents] = useState<Event[]>([]); 
+  const [events, setEvents] = useState<Event[]>([]); 
 
-   useEffect(() => {
-    const fetchEvents = async () => {
-        try {
-            const response = await api.get("/events/");
-            const parsedEvents = response.data.map((event: any) => ({
-                ...event,
-                endDate: new Date(event.endDate),
-            }));
-            setEvents(parsedEvents);
-        } catch (err) {
-            console.error(err);
-        }
-    };
+  const fetchEvents = async () => {
+    setIsLoading(true);
 
-    fetchEvents();
-    }, []);
+    try {
+      const response = await api.get("/events/");
+      const parsedEvents = response.data.map((event: any) => ({
+          ...event,
+          endDate: new Date(event.endDate),
+      }));
+        setEvents(parsedEvents);
+    } catch (err) {
+        console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  // initial load
+  useEffect(() => {
+      fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("event-updated", fetchEvents);; // will likely create new function to both fetch and display a confirmation message
+
+    return () => window.removeEventListener("event-updated", fetchEvents);
+  }, []);
 
   const filterCategories: Record<string, string[]> = {
     "practices": ["practice"],
@@ -96,7 +108,12 @@ export default function Events() {
         <EventToolBar past={ past } setPast={ handlePastChange } activeFilter={ activeFilter } setActiveFilter={ handleFilterChange } eventCount={ eventCount }/>
 
         <div ref={ scrollContainer } onScroll={ handleScroll } className="overflow-y-auto h-full">
-          <EventContainer eventList={ filteredEvents } skeletonCount={6}/>
+          <EventContainer 
+            eventList={filteredEvents} 
+            skeletonCount={6} 
+            isLoading={isLoading}
+            onRefetch={fetchEvents}
+          />
         </div>
 
         <div className={`pointer-events-none absolute w-full bottom-0 h-15 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${ showFade ? "opacity-100" : "opacity-0"}`}/>

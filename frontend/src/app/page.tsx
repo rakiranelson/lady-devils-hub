@@ -1,10 +1,10 @@
 "use client";
 
-import { useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { SemesterContext } from "@/contexts/SemesterContext"
 import Header from "@/components/Header"
 import AnnouncementContainer from "@/components/AnnouncementContainer";
-import { AnnouncementProps } from "@/components/Announcement";
 import { EventContainer, Event } from "@/components/EventContainer";
 import Carousel from "@/components/Carousel";
 import { CarouselItem } from "@/components/Carousel";
@@ -12,66 +12,42 @@ import useMediaQuery from "@/hooks/useMediaQuery";
 import OpenPageIcon from "@/assets/icons/openPage.svg";
 import Link from "next/link";
 
+import api from "@/lib/api";
+
 
 export default function Home() {
+  const [events, setEvents] = useState<Event[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const pathname = usePathname();
 
 
-  /* call a function to fetch the events with earliest date  from today) first */
+  const fetchEvents = async () => {
+    setIsLoading(true);
 
-  const events: Event[] = [
-    {
-      id: 1,
-      category: "practice",
-      eventName: "Practice 9/3",
-      locationName: "East Duke Lawn",
-      dateLabel: "Thursday Sep 03",
-      endDate: new Date(2026, 8, 3, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Regular",
-      response: "yes",
-      isTentative: false,
-    },
-    {
-      id: 2,
-      category: "tournament",
-      eventName: "NIRSA Championship Tournament",
-      locationName: "Charlottesville, VA",
-      dateLabel: "Saturday Sep 05 - Sunday Sep 06",
-      endDate: new Date(2026, 8, 6, 23, 59),
-      time: "",
-      response: null,
-      isTentative: false,
-      tournamentType: "Regional",
-      isRegistered: false,
-      deadlineLabel: "9/1 @ 12:00pm",
-      deadline: new Date(2026, 8, 1, 23, 59),
-    },
+    try {
+        const response = await api.get("/events/overview?limit=4");
+        const parsedEvents = response.data.map((event: any) => ({
+            ...event,
+            endDate: new Date(event.endDate),
+        }));
+        setEvents(parsedEvents);
+    } catch (err) {
+        console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }; 
 
-    {
-      id: 4,
-      eventName: "Executive Board Meeting",
-      locationName: "Perkins",
-      category: "Other",
-      dateLabel: "Friday Sep 11",
-      endDate: new Date(2026, 8, 4, 18, 45),
-      time: "6:00-6:45pm",
-      response: "yes",
-      isTentative: false,
-    },
+  // initial load
+  useEffect(() => {
+      fetchEvents();
+  }, []);
 
-    {
-      id: 3,
-      category: "practice",
-      eventName: "Practice 9/8",
-      locationName: "Brodie Gym",
-      dateLabel: "Tuesday Sep 08",
-      endDate: new Date(2026, 8, 8, 19),
-      time: "5:00-7:00pm",
-      practiceType: "Conditioning",
-      response: "yes",
-      isTentative: false,
-    },
-  ];
+  useEffect(() => {
+    window.addEventListener("event-updated", fetchEvents);; // will likely create new function to both fetch and display a confirmation message
+
+    return () => window.removeEventListener("event-updated", fetchEvents);
+  }, []);
 
   const plays: CarouselItem[] = [
     {
@@ -178,7 +154,7 @@ export default function Home() {
 
   const visibleEvents =
     isThreeColumns === null // remove the null thing later
-        ? null
+        ? []
         : isThreeColumns
         ? events.slice(0, 3)
         : events.slice(0, 4);
@@ -202,7 +178,12 @@ export default function Home() {
             </div>
           </div>
           
-          <EventContainer eventList={ visibleEvents } skeletonCount={3}/>
+          <EventContainer 
+            eventList={visibleEvents} 
+            skeletonCount={3}
+            isLoading={isLoading}
+            onRefetch={fetchEvents}
+          />
         </div>
 
         <div className="mt-4 sm:text-lg">

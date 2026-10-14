@@ -1,4 +1,6 @@
 import PinIcon from "@/assets/icons/pin.svg";
+import AnnouncementEllipsis from "./AnnouncementEllipsis";
+import { useRef, useState } from "react";
 
 export type AnnouncementProps = {
     id: number;
@@ -8,9 +10,11 @@ export type AnnouncementProps = {
 };
 
 
-export function Announcement(announcement : AnnouncementProps) {
+export function Announcement(announcement : AnnouncementProps & { onRefetch: () => void }) {
+    const announcementRef = useRef<HTMLDivElement>(null);
+
     return (
-        <div className={` w-full flex rounded-[5px] ${ announcement.pinned ? "" : ""} `}>
+        <div ref={announcementRef} className={` w-full flex rounded-[5px] group `}>
 
             <div className="w-6 flex shrink-0 justify-center pt-[2px] items-center">
                 { announcement.pinned && (
@@ -23,6 +27,14 @@ export function Announcement(announcement : AnnouncementProps) {
             </div>
             <div className={` ml-4 sm:text-base ${ announcement.pinned ? "font-semibold" : "text-foreground/85"} `}>
                 { announcement.content }
+            </div>
+            <div className="ml-auto opacity-10 group-hover:opacity-100 text-sm">
+                <AnnouncementEllipsis 
+                    announcementId={announcement.id}
+                    pinned={announcement.pinned}
+                    announcementRef={announcementRef}
+                    onRefetch={announcement.onRefetch}
+                />
             </div>
 
         </div>

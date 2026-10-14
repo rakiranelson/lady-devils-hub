@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 from fastapi import APIRouter, Depends, HTTPException, status
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from app.db.connection import get_db
 from sqlalchemy.orm import Session
@@ -28,7 +28,30 @@ class AnnouncementResponse(BaseModel):
     created_time: str
 
 
+class AnnouncementEditResponse(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, validate_by_name=True)
+
+    id: int
+    content: str
+    expiration_date: str
+    expiration_time: str
+    pinned: bool
+
+
+class PinUpdate(BaseModel):
+    pinned: bool
+
+
 router = APIRouter(prefix="/announcements", tags=["announcements"])
+
+
+def format_expired_time(expiration_date, expiration_time):
+    expires_at = datetime.strptime(
+        f"{expiration_date} {expiration_time}",
+        "%m-%d-%Y %I:%M %p",
+    ).replace(tzinfo=LOCAL_TZ)
+
+    return expires_at
 
 
 def get_relative_time(dt: datetime):
@@ -73,10 +96,9 @@ def create_announcement(
     current_user = 1
 
     # datetime logic
-    expires_at = datetime.strptime(
-        f"{announcement.expiration_date} {announcement.expiration_time}",
-        "%m-%d-%Y %I:%M %p",
-    ).replace(tzinfo=LOCAL_TZ)
+    expires_at = format_expired_time(
+        announcement.expiration_date, announcement.expiration_time
+    )
 
     new = Announcement(
         content=announcement.content,
@@ -110,3 +132,78 @@ def get_announcements(db: Session = Depends(get_db)):
         }
         for a in announcements
     ]
+
+
+@router.get("/{announcement_id}", response_model=AnnouncementEditResponse)
+def get_announcement(announcement_id: int, db: Session = Depends(get_db)):
+
+    announcement = db.scalar(
+        select(Announcement).where(Announcement.id == announcement_id)
+    )
+
+    if not announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+
+    expires_at = announcement.expires_at.astimezone(LOCAL_TZ)
+
+    expiration_date = expires_at.strftime("%m-%d-%Y")
+    expiration_time = expires_at.strftime("%I:%M %p")
+
+    return {
+        "id": announcement.id,
+        "content": announcement.content,
+        "expiration_date": expiration_date,
+        "expiration_time": expiration_time,
+        "pinned": announcement.pinned,
+    }
+
+
+# complete update
+@router.patch("/{announcement_id}", status_code=status.HTTP_204_NO_CONTENT)
+def update_announcement(
+    announcement_id: int, update: AnnouncementCreate, db: Session = Depends(get_db)
+):
+    announcement = db.scalar(
+        select(Announcement).where(Announcement.id == announcement_id)
+    )
+
+    if not announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+
+    expires_at = format_expired_time(update.expiration_date, update.expiration_time)
+
+    announcement.content = update.content
+    announcement.expires_at = expires_at
+    announcement.pinned = update.pinned
+
+    db.commit()
+
+
+@router.patch("/{announcement_id}/pin", status_code=status.HTTP_204_NO_CONTENT)
+def update_pin(announcement_id: int, update: PinUpdate, db: Session = Depends(get_db)):
+    announcement = db.scalar(
+        select(Announcement).where(Announcement.id == announcement_id)
+    )
+
+    if not announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+
+    announcement.pinned = update.pinned
+    db.commit()
+
+
+@router.patch("/{announcement_id}/remove", status_code=status.HTTP_204_NO_CONTENT)
+def remove_announcement(announcement_id: int, db: Session = Depends(get_db)):
+    minutes_before = 3
+
+    announcement = db.scalar(
+        select(Announcement).where(Announcement.id == announcement_id)
+    )
+
+    if not announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+
+    announcement.expires_at = datetime.now(timezone.utc) - timedelta(
+        minutes=minutes_before
+    )
+    db.commit()

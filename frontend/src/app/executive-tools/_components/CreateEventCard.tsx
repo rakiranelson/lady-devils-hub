@@ -7,13 +7,36 @@ import FormField from "./FormField";
 import FormMultiSelect from "./FormMultiSelect";
 import FormSingleSelect from "./FormSingleSelect";
 import FormToggle from "./FormToggle";
+import Checkbox from "./Checkbox";
 import NoticeIcon from "@/assets/icons/notice.svg";
 import getFormattedDate from "@/lib/getFormattedDate";
 
 import api from "@/lib/api";
-import Checkbox from "./Checkbox";
 
-export default function CreateEventCard() {
+export type OldEvent = {
+    id: number,
+    name: string,
+    category: string,
+    locationName: string,
+    locationAddress: string,
+    details: string,
+    startDate: string,
+    endDate: string,
+    startTime: string,
+    endTime: string,
+    eventType: string,
+    additionalRequirements: string[],
+    registrationDeadlineDate: string,
+    registrationDeadlineTime: string,
+    isMultiDay: boolean,
+    rsvpOpen: boolean,
+};
+
+type Props = {
+    oldEvent?: OldEvent;
+};
+
+export function CreateEventCard({ oldEvent }: Props) {
     const [page, setPage] = useState(1);
     const [prevPage, setPrevPage] = useState(0);
     const router = useRouter();
@@ -24,23 +47,23 @@ export default function CreateEventCard() {
     const placeholderEndDate = getFormattedDate(10);
 
     // page 1 form fields
-    const [name, setName] = useState<string>("");
-    const [startDate, setStartDate] = useState<string>("");
-    const [isMultiDay, setIsMultiDay] = useState<boolean>(false);
-    const [endDate, setEndDate] = useState<string>("");
-    const [startTime, setStartTime] = useState<string>("");
-    const [endTime, setEndTime] = useState<string>("");
-    const [category, setCategory] = useState<string>("");
-    const [eventType, setEventType] = useState<string>("");
-    const [locationName, setLocationName] = useState<string>("");
-    const [locationAddress, setLocationAddress] = useState<string>("");
+    const [name, setName] = useState<string>(oldEvent?.name ?? "");
+    const [startDate, setStartDate] = useState<string>(oldEvent?.startDate ?? "");
+    const [isMultiDay, setIsMultiDay] = useState<boolean>(oldEvent?.isMultiDay ?? false);
+    const [endDate, setEndDate] = useState<string>(oldEvent?.endDate ?? "");
+    const [startTime, setStartTime] = useState<string>(oldEvent?.startTime ?? "");
+    const [endTime, setEndTime] = useState<string>(oldEvent?.endTime ?? "");
+    const [category, setCategory] = useState<string>(oldEvent?.category ?? "");
+    const [eventType, setEventType] = useState<string>(oldEvent?.eventType ?? "");
+    const [locationName, setLocationName] = useState<string>(oldEvent?.locationName ?? "");
+    const [locationAddress, setLocationAddress] = useState<string>(oldEvent?.locationAddress ?? "");
 
     // page 2 form fields
-    const [additionalRequirements, setAdditionalRequirements] = useState<string[]>([]);
-    const [registrationDeadlineDate, setRegistrationDeadlineDate] = useState<string>("");
-    const [registrationDeadlineTime, setRegistrationDeadlineTime] = useState<string>("");
-    const [details, setDetails] = useState<string>("");
-    const [autoOpenRSVP, setAutoOpenRSVP] = useState(false);
+    const [additionalRequirements, setAdditionalRequirements] = useState<string[]>(oldEvent?.additionalRequirements ?? []);
+    const [registrationDeadlineDate, setRegistrationDeadlineDate] = useState<string>(oldEvent?.registrationDeadlineDate ?? "");
+    const [registrationDeadlineTime, setRegistrationDeadlineTime] = useState<string>(oldEvent?.registrationDeadlineTime ?? "");
+    const [details, setDetails] = useState<string>(oldEvent?.details ?? "");
+    const [autoOpenRSVP, setAutoOpenRSVP] = useState(oldEvent?.rsvpOpen ?? false);
     const isTentative =
         (
             startDate === "" ||
@@ -76,13 +99,12 @@ export default function CreateEventCard() {
 
     const handleBack = () => {
         setError("");
-        setPage(prevPage)
-        setPrevPage(prevPage - 1)
+        setPage(prevPage);
+        setPrevPage(prevPage - 1);
     };
 
     const handleCancel = () => {
         router.back();
-        // get rid of temp event id
     };
 
     const handleSubmit = async () => {
@@ -90,7 +112,7 @@ export default function CreateEventCard() {
 
         if (!isTentative && category === "tournament") {
             if (registrationDeadlineDate === "" || registrationDeadlineTime == "") {
-                missingFields.push("Registration Deadline")
+                missingFields.push("Registration Deadline");
             }
         }
 
@@ -122,22 +144,32 @@ export default function CreateEventCard() {
         };
 
         try {
-            const response = await api.post("/events/", payload);
-            console.log("SUCCESS", response.data);
+            if (oldEvent?.id) {
+                console.log("Updating event...");
+                const response = await api.patch(`/events/${oldEvent.id}`, payload);
+                window.dispatchEvent(new Event("event-updated"))
+                router.back();
 
-            // await router.replace("/events"); // change this later
-            // router.push(`/events/${response.data.id}`);
+            } else {
+                console.log("Creating event...");
+                const response = await api.post("/events/", payload);
+                console.log("SUCCESS", response.data);
+                window.dispatchEvent(new Event("event-create"))
 
-            router.replace(`/events/${response.data.id}`);
+                // await router.replace("/events"); // change this later
+                // router.push(`/events/${response.data.id}`);
+                router.replace(`/events/${response.data.id}`);
+            }    
         } catch (err) {
             console.error(err)
             setSubmitError("Something went wrong while saving the event. Please try again.")
         }
+
     };
 
 
     return (
-        <FormCard cardTitle="Create Event">
+        <FormCard cardTitle={ oldEvent?.id ?"Update Event" : "Create Event" }>
             { page === 1 && (
               <>
                 <div className="flex flex-col gap-3 pb-5 border-b-1 border-muted-1/30">
@@ -227,7 +259,7 @@ export default function CreateEventCard() {
                                     onChange={setEventType}
                                     options={[
                                         {label: "Regional", value: "regional"},
-                                        {label: "State", value: "State"},
+                                        {label: "State", value: "state"},
                                         {label: "Other", value: "other"},
                                     ]}
                                     width={200}

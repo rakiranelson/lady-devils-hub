@@ -41,3 +41,17 @@ def add_practice(event_id, practice_type, db: Session):
     db.add(new)
     db.commit()
     db.refresh(new)
+
+
+def delete_practice(event_id: int, db: Session):
+    practice = db.scalar(select(Practice).where(Practice.id == event_id))
+    if practice:
+        db.delete(practice)
+
+
+def update_practice(event_id, practice_type, db: Session):
+    practice = db.scalar(select(Practice).where(Practice.id == event_id))
+
+    practice.practice_type = practice_type
+
+    db.commit()

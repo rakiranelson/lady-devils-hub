@@ -62,5 +62,5 @@ export default function FullEvent({ params }: { params: Promise<{ eventId: strin
             </div>
         </div>
     </div>
-)
+    )
 };

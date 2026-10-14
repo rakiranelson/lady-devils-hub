@@ -20,8 +20,8 @@ export default function GoBack({ title = "", color } : Props) {
     return (
         <div className={` rounded-[3.2px] text-${ color } hover:text-foreground transition-all hover:cursor-pointer`} onClick={ handleBackNavigation }> 
 
-            <span className="mr-1">{ title }</span>
-            <BackIcon className="inline text-[1.1rem] mb-0.5"/>
+            <span className="mr-1 text-base">{ title }</span>
+            <BackIcon className="inline text-[1.2rem] mb-[3px]"/>
         </div>
     )
 };
