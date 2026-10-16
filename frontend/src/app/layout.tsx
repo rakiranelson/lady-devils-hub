@@ -6,6 +6,7 @@ import SemesterProvider from "@/contexts/SemesterContext"
 import SidebarContentProvider from "@/contexts/SidebarContext";
 import CurrentUserProvider from "@/contexts/CurrentUserContext";
 import ModalProvider from "@/contexts/ModalContext";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 
 const plusJakartaSans  = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -41,9 +42,11 @@ export default function RootLayout({
           <SemesterProvider>
           <SidebarContentProvider>
             <body className="h-screen flex scrollbar-thumb-muted-2 scrollbar-track-transparent overflow-hidden">
-              <AppLayout modal={modal}>
-                {children}
-              </AppLayout>
+              <AppRouterCacheProvider>
+                <AppLayout modal={modal}>
+                  {children}
+                </AppLayout>
+              </AppRouterCacheProvider>
             </body>
           </SidebarContentProvider>
         </SemesterProvider>

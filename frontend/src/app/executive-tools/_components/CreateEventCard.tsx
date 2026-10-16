@@ -10,8 +10,11 @@ import FormToggle from "./FormToggle";
 import Checkbox from "./Checkbox";
 import NoticeIcon from "@/assets/icons/notice.svg";
 import getFormattedDate from "@/lib/getFormattedDate";
+import { format, parse } from "date-fns";
 
 import api from "@/lib/api";
+import DatePickerDemo from "@/components/DatePicker";
+import TimePicker from "@/components/TimePicker";
 
 export type OldEvent = {
     id: number,
@@ -37,20 +40,18 @@ type Props = {
 };
 
 export function CreateEventCard({ oldEvent }: Props) {
+
     const [page, setPage] = useState(1);
     const [prevPage, setPrevPage] = useState(0);
     const router = useRouter();
     const [error, setError] = useState<string>("");
     const [submitError, setSubmitError] = useState<string>("");
 
-    const placeholderStartDate = getFormattedDate(7);
-    const placeholderEndDate = getFormattedDate(10);
-
     // page 1 form fields
     const [name, setName] = useState<string>(oldEvent?.name ?? "");
-    const [startDate, setStartDate] = useState<string>(oldEvent?.startDate ?? "");
+    const [startDate, setStartDate] = useState<Date | undefined>(oldEvent?.startDate ? parse(oldEvent.startDate, "MM-dd-yyyy", new Date()) : undefined );
     const [isMultiDay, setIsMultiDay] = useState<boolean>(oldEvent?.isMultiDay ?? false);
-    const [endDate, setEndDate] = useState<string>(oldEvent?.endDate ?? "");
+    const [endDate, setEndDate] = useState<Date | undefined>(oldEvent?.endDate ? parse(oldEvent.endDate, "MM-dd-yyyy", new Date()) : undefined );
     const [startTime, setStartTime] = useState<string>(oldEvent?.startTime ?? "");
     const [endTime, setEndTime] = useState<string>(oldEvent?.endTime ?? "");
     const [category, setCategory] = useState<string>(oldEvent?.category ?? "");
@@ -60,15 +61,19 @@ export function CreateEventCard({ oldEvent }: Props) {
 
     // page 2 form fields
     const [additionalRequirements, setAdditionalRequirements] = useState<string[]>(oldEvent?.additionalRequirements ?? []);
-    const [registrationDeadlineDate, setRegistrationDeadlineDate] = useState<string>(oldEvent?.registrationDeadlineDate ?? "");
+    const [registrationDeadlineDate, setRegistrationDeadlineDate] = useState<Date | undefined>(
+        oldEvent?.registrationDeadlineDate
+            ? parse(oldEvent.registrationDeadlineDate, "MM-dd-yyyy", new Date())
+            : undefined
+     );
     const [registrationDeadlineTime, setRegistrationDeadlineTime] = useState<string>(oldEvent?.registrationDeadlineTime ?? "");
     const [details, setDetails] = useState<string>(oldEvent?.details ?? "");
     const [autoOpenRSVP, setAutoOpenRSVP] = useState(oldEvent?.rsvpOpen ?? false);
     const isTentative =
         (
-            startDate === "" ||
+            startDate === undefined ||
             (locationName === "" && locationAddress === "") ||
-            (isMultiDay ? endDate === "" : startTime === "")
+            (isMultiDay ? endDate === undefined : (startTime === "" || endTime === ""))
         );
 
     const handleNext = () => {
@@ -111,7 +116,7 @@ export function CreateEventCard({ oldEvent }: Props) {
         const missingFields: string[] = [];
 
         if (!isTentative && category === "tournament") {
-            if (registrationDeadlineDate === "" || registrationDeadlineTime == "") {
+            if (registrationDeadlineDate === undefined || registrationDeadlineTime == undefined) {
                 missingFields.push("Registration Deadline");
             }
         }
@@ -129,16 +134,24 @@ export function CreateEventCard({ oldEvent }: Props) {
             location_name: locationName === "" ? null : locationName.trim(),
             location_address: locationAddress === "" ? null : locationAddress.trim(),
             details: details === "" ? null : details,
-            start_date: startDate === "" ? null : startDate,
-            end_date: isMultiDay ? (endDate === "" ? null : endDate) : null ,
+            start_date: startDate ? format(startDate, "MM-dd-yyyy") : null,
+            end_date: isMultiDay ? (endDate ? format(endDate, "MM-dd-yyyy") : null) : null ,
             start_time: !isMultiDay ? (startTime === "" ? null : startTime) : null,
             end_time: !isMultiDay ? (endTime === "" ? null : endTime) : null,
 
             // extra variables
-            event_type: eventType === "" ? null : eventType.trim(),
-            additional_requirements: (category === "tournament") ? additionalRequirements : null,
-            registration_deadline_date: (category === "tournament") ? registrationDeadlineDate : null,
-            registration_deadline_time: (category === "tournament") ? registrationDeadlineTime : null,
+            event_type: eventType === "" 
+                ? null 
+                : eventType.trim(),
+            additional_requirements: (category === "tournament") 
+                ? additionalRequirements 
+                : null,
+            registration_deadline_date: (category === "tournament" && registrationDeadlineDate)
+                ? format(registrationDeadlineDate, "MM-dd-yyyy")
+                : null,
+            registration_deadline_time: (category === "tournament") 
+                ? registrationDeadlineTime 
+                : null,
             is_multi_day: isMultiDay,
             rsvp_open: autoOpenRSVP,
         };
@@ -180,21 +193,21 @@ export function CreateEventCard({ oldEvent }: Props) {
                             value={name}
                             onChange={setName}
                         />
+
                         <div className={` flex justify-between `}>
                             <div className="flex flex-col gap-1">
-                                <FormField 
-                                    formName={ isMultiDay ? "Start Date" : "Date"} 
-                                    placeholder={placeholderStartDate} 
-                                    value={startDate}
-                                    onChange={setStartDate}
-                                    width={150}
+                                <DatePickerDemo
+                                    formName={ isMultiDay ? "Start Date" : "Date"}
+                                    date={startDate} 
+                                    setDate={setStartDate}
+                                    width={200}
                                 />
                                 <div className="select-none flex justify-between px-2 items-center">
-                                    <span className={` text-sm transition-all duration-300 ${isMultiDay ? "text-foreground/80" : "text-muted-2/70"}`}>Multi-day Event:</span>
+                                    <span className={` text-base transition-all duration-300 ${isMultiDay ? "text-foreground/80" : "text-muted-2/70"}`}>Multi-day Event:</span>
                                     <FormToggle
                                         toggle={isMultiDay}
                                         onChange={setIsMultiDay}
-                                        size={10}
+                                        size={12}
                                     />
                                 </div>
                                 
@@ -202,32 +215,36 @@ export function CreateEventCard({ oldEvent }: Props) {
                             
                             { isMultiDay ? 
                                 (
-                                    <FormField
-                                        formName="End Date"
-                                        placeholder={placeholderEndDate}
-                                        value={endDate}
-                                        onChange={setEndDate}
-                                        formDependencies={[setStartTime, setEndTime]}
-                                        width={150}
+                                    <DatePickerDemo
+                                        formName={ isMultiDay ? "End Date" : "Date"}
+                                        date={endDate} 
+                                        setDate={setEndDate}
+                                        formDependencies={[
+                                            () => setStartTime(""), 
+                                            () => setEndTime(""),
+                                        ]}
+                                        width={200}
                                     />
                                 ) :
                                 (
                                     <div className="flex gap-2">
-                                        <FormField 
-                                            formName="Time" 
-                                            placeholder="5:00 PM" 
+                                        <TimePicker
+                                            formName="Time"
                                             value={startTime}
                                             onChange={setStartTime}
-                                            formDependencies={[setEndDate]}
+                                            formDependencies={[
+                                                () => setEndDate(undefined)
+                                            ]}
                                             width={100}
-                                            
                                         />
+
                                         <span className="w-3 border-b-2 border-foreground mb-10"/>
-                                        <FormField 
-                                            placeholder="7:00 PM" 
+                                        <TimePicker 
                                             value={endTime}
                                             onChange={setEndTime}
-                                            formDependencies={[setEndDate]}
+                                            formDependencies={[
+                                                () => setEndDate(undefined)
+                                            ]}
                                             width={100}
                                         />
                                     </div>
@@ -249,7 +266,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                 ]}
                                 formDependencies={[setEventType]}
                                 width={200}
-                                // width={150}
+                                
                             />
                             { category == "tournament" &&
                                 <FormSingleSelect 
@@ -259,7 +276,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                     onChange={setEventType}
                                     options={[
                                         {label: "Regional", value: "regional"},
-                                        {label: "State", value: "state"},
+                                        {label: "National", value: "national"},
                                         {label: "Other", value: "other"},
                                     ]}
                                     width={200}
@@ -321,7 +338,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                     <div className="flex flex-col gap-4 pb-5 border-b-1 border-muted-1/30 flex-1">
                         <div className="flex flex-col flex-1" >
                             <FormField 
-                                formName="Event Details" 
+                                formName="Event Details (optional)" 
                                 placeholder="e.g. Please bring cleats and/or gloves if you have them." 
                                 multiline={true}
                                 value={details}
@@ -342,17 +359,15 @@ export function CreateEventCard({ oldEvent }: Props) {
                                     openOnRight={true}
                                 />
                                 <div className="flex gap-2 items-end">
-                                    <FormField 
+                                    <DatePickerDemo
                                         formName="Registration Deadline"
                                         required={isTentative ? false: true}
-                                        placeholder="01-28-2025" 
-                                        value={registrationDeadlineDate}
-                                        onChange={setRegistrationDeadlineDate}
-                                        width={150}
+                                        date={registrationDeadlineDate} 
+                                        setDate={setRegistrationDeadlineDate}
+                                        width={200}
                                     />
                                     <span className="w-3 mb-1">@</span>
-                                    <FormField 
-                                        placeholder="7:00 PM" 
+                                    <TimePicker 
                                         value={registrationDeadlineTime}
                                         onChange={setRegistrationDeadlineTime}
                                         width={100}

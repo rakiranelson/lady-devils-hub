@@ -1,6 +1,7 @@
 import PinIcon from "@/assets/icons/pin.svg";
 import AnnouncementEllipsis from "./AnnouncementEllipsis";
-import { useRef, useState } from "react";
+import { useRef, useContext } from "react";
+import { UserContext } from "@/contexts/CurrentUserContext";
 
 export type AnnouncementProps = {
     id: number;
@@ -11,6 +12,7 @@ export type AnnouncementProps = {
 
 
 export function Announcement(announcement : AnnouncementProps & { onRefetch: () => void }) {
+    const isExec = useContext(UserContext)?.exec;
     const announcementRef = useRef<HTMLDivElement>(null);
 
     return (
@@ -29,12 +31,14 @@ export function Announcement(announcement : AnnouncementProps & { onRefetch: () 
                 { announcement.content }
             </div>
             <div className="ml-auto opacity-10 group-hover:opacity-100 text-sm">
-                <AnnouncementEllipsis 
-                    announcementId={announcement.id}
-                    pinned={announcement.pinned}
-                    announcementRef={announcementRef}
-                    onRefetch={announcement.onRefetch}
-                />
+                { isExec && (
+                    <AnnouncementEllipsis 
+                        announcementId={announcement.id}
+                        pinned={announcement.pinned}
+                        announcementRef={announcementRef}
+                        onRefetch={announcement.onRefetch}
+                    />
+                )}    
             </div>
 
         </div>

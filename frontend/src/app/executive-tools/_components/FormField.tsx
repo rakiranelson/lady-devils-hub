@@ -11,14 +11,14 @@ type FormFieldProps = {
     multiline?: boolean;
     value: string;
     onChange: (value: string) => void;
-    formDependencies?: ((value: string) => void)[]
+    formDependencies?: (() => void)[]
 };
 
 export default function FormField({ formName, placeholder, required = false, width, multiline = false, value, onChange, formDependencies = [] }: FormFieldProps) {
 
     const handleFormField = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         onChange(e.target.value);
-        formDependencies.forEach((field) => field(""));
+        formDependencies.forEach((field) => field());
     };
 
     return (

@@ -24,7 +24,7 @@ export default function FormSingleSelect({ formName, required = false, selected,
 
     // close when clicking outside
     useEffect(() => {
-        if (isOpen) return;
+        if (!isOpen) return;
         
         const handleOutsideClick = (e: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

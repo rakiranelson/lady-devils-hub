@@ -36,12 +36,23 @@ export default function FullEvent({ params }: { params: Promise<{ eventId: strin
     }, [eventId]);
 
     if (isLoading) {
-        return <div className="flex h-full items-center justify-center">Loading...</div>;
-    }
+        return (
+        <div className="absolute inset-0 bg-black/60 z-100 flex" onClick={close}>
+            <div className="flex flex-1 min-w-0 h-full items-center justify-center py-15 px-8 
+            z-110" >
+                <div className="contents" onClick={(e) => e.stopPropagation()}>
+                     <div className={`aspect-[360/300] min-h-0 mx-auto flex flex-col bg-card rounded-[18px] shadow-large-card justify-center items-center text-lg`} style={{ width: "min(calc((100vh - 120px) * (360/300)), 100%)" }}>
+                        Loading...
+                     </div>
+                </div>
+            </div>
+        </div>
+        )
+    };
 
     if (error || !event) {
         return <div className="flex h-full items-center justify-center">{error || "Event not found."}</div>;
-    }
+    };
 
     return (
     <div className="absolute inset-0 bg-black/60 z-100 flex" onClick={close}>

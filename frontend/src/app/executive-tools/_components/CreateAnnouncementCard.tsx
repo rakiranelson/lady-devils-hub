@@ -5,9 +5,13 @@ import { useRouter } from "next/navigation";
 import { FormCard, Option } from "./FormCard";
 import FormField from "./FormField";
 import Checkbox from "./Checkbox";
+import DatePickerDemo from "@/components/DatePicker";
+import TimePicker from "@/components/TimePicker";
 
 import api from "@/lib/api";
 import getFormattedDate from "@/lib/getFormattedDate";
+
+import { format, parse } from "date-fns";
 
 export type OldAnnouncement = {
     id: number,
@@ -31,7 +35,11 @@ export function CreateAnnouncementCard({ oldAnnouncement }: Props) {
 
     // page 1 form fields
     const [content, setContent] = useState<string>(oldAnnouncement?.content ?? "");
-    const [expirationDate, setExpirationDate] = useState<string>(oldAnnouncement?.expirationDate ?? "");
+    const [expirationDate, setExpirationDate] = useState<Date | undefined>(
+    oldAnnouncement?.expirationDate
+        ? parse(oldAnnouncement.expirationDate, "MM-dd-yyyy", new Date())
+        : undefined
+    );
     const [expirationTime, setExpirationTime] = useState<string>(oldAnnouncement?.expirationTime ?? "");
     const [pinned, setPinned] = useState<boolean>(oldAnnouncement?.pinned ?? false);
 
@@ -44,7 +52,7 @@ export function CreateAnnouncementCard({ oldAnnouncement }: Props) {
         const missingFields: string[] = [];
 
         if (content.trim() === "") missingFields.push("Announcement Message")
-        if (expirationDate.trim() === "" || expirationTime.trim() === "") missingFields.push("Expiration Date");
+        if (expirationDate === undefined || expirationTime === undefined) missingFields.push("Expiration Date");
 
         if (missingFields.length > 0) {
             console.log("blocked by missing fields", missingFields);
@@ -97,16 +105,14 @@ export function CreateAnnouncementCard({ oldAnnouncement }: Props) {
                         multiline={true}
                     />
                     <div className="flex gap-5">
-                        <FormField
+                        <DatePickerDemo
                             formName="Announcement Expiration"
-                            placeholder={placeholderDate}
                             required={true}
-                            value={expirationDate}
-                            onChange={setExpirationDate}
-                            width={150}
+                            date={expirationDate} 
+                            setDate={setExpirationDate}
+                            width={200}
                         />
-                        <FormField
-                            placeholder="11:59 PM"
+                        <TimePicker 
                             value={expirationTime}
                             onChange={setExpirationTime}
                             width={100}
