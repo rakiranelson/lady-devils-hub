@@ -11,7 +11,7 @@ export const UserContext = createContext<User | null>(null);
 // run a query to get the current user
 const currentUser: User = {
     id: 1,
-    exec: true
+    exec: false
 };
 
 export default function CurrentUserProvider(

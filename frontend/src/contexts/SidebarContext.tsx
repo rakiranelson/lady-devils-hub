@@ -1,5 +1,6 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
+import { UserContext } from "@/contexts/CurrentUserContext";
 
 type SidebarInfo = {
     name: string;
@@ -26,25 +27,6 @@ const sidebarInit = {
 
 export const SidebarContext = createContext<SidebarInfo>(sidebarInit); 
 
-// run a query to get the information for sidebar
-const user = {
-    name: "Anita M.",
-    profile: {
-      initials: "AM",
-      size: 50
-    },
-    navItems: [
-      { label: "Admin Settings", href: "/admin"},
-      { label: "Exec Tools", href: "/executive-tools"},
-      { label: "Events", href: "/events"},
-      { label: "Playbook", href: "/playbook"},
-      { label: "Roster", href: "/roster"},
-      { label: "Resources", href: "/resources"},
-      { label: "Feedback", href: "/feedback"}
-    ]
-  };
-
-
 type MobileSidebarInfo= {
     isOpen: boolean;
     openSidebar: () => void;
@@ -64,7 +46,30 @@ export default function SidebarContentProvider(
 { children }: { children: React.ReactNode }) {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const isExec = useContext(UserContext)?.exec;
 
+    const user = isExec
+    ? {
+        name: "Exec Profile",
+        profile: { initials: "EP", size: 50 },
+        navItems: [
+          { label: "Exec Tools", href: "/executive-tools" },
+          { label: "Events", href: "/events" },
+          { label: "Playbook", href: "/playbook" },
+        ],
+      }
+    : {
+        name: "Player Profile",
+        profile: {
+          initials: "PP",
+          size: 50
+        },
+        navItems: [
+          { label: "Events", href: "/events"},
+          { label: "Playbook", href: "/playbook"},
+        ]
+      }
+      
     return (
         <SidebarContext.Provider value={user}>
             <MobileSidebarContext.Provider value={{    
@@ -77,5 +82,3 @@ export default function SidebarContentProvider(
         </SidebarContext.Provider>
     );
 };
-
-
