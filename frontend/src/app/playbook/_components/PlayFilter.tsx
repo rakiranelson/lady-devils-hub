@@ -11,7 +11,8 @@ export default function PlayFilter({ activeFilter, setActiveFilter }: props) {
 
     const opt1Ref = useRef<HTMLDivElement>(null);
     const opt2Ref = useRef<HTMLDivElement>(null);
-    // const opt3Ref = useRef<HTMLDivElement>(null);
+    const opt3Ref = useRef<HTMLDivElement>(null);
+    // const opt4Ref = useRef<HTMLDivElement>(null);
 
     const [highlight, setHighlight] = useState<{
                                         left: number | undefined;
@@ -23,8 +24,9 @@ export default function PlayFilter({ activeFilter, setActiveFilter }: props) {
     useEffect(() => {
         const refMap: Record<string, React.RefObject<HTMLDivElement | null>> = {
             "offense": opt1Ref,
-            "defense": opt2Ref,
-            // "Special Teams": opt3Ref,
+            "route-concepts": opt2Ref,
+            "defense": opt3Ref,
+            // "Special Teams": opt4Ref,
         };
 
         const activeRef = refMap[activeFilter] ?? opt1Ref;
@@ -44,10 +46,13 @@ export default function PlayFilter({ activeFilter, setActiveFilter }: props) {
             <div ref={ opt1Ref } onClick={() => setActiveFilter("offense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Offense
             </div>
-            <div ref={ opt2Ref } onClick={() => setActiveFilter("defense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            <div ref={ opt2Ref } onClick={() => setActiveFilter("route-concepts")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+                Route Concepts
+            </div>
+            <div ref={ opt3Ref } onClick={() => setActiveFilter("defense")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Defense
             </div>
-            {/* <div ref={ opt3Ref } onClick={() => setActiveFilter("Special Teams")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
+            {/* <div ref={ opt4Ref } onClick={() => setActiveFilter("Special Teams")} className={` h-full flex flex-none items-center px-6 z-5 hover:cursor-pointer select-none`}>
                 Special Teams
             </div> */}
 

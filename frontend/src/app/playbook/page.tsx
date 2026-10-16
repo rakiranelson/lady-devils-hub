@@ -34,113 +34,135 @@ export default function Playbook() {
 
 
       const plays: PlayProps[] = [
+        // offense
         {
           id: 1,
-          playName: "Mesh Spot",
-          playNumber: 1,
+          playName: "Durham",
           playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-1.jpg",
+          playNumber: 1,
+          thumbnail_url: "/playbook/thumbnails/cropped-play-1.jpg",
           animation_url: null,
         },
-    
+
         {
           id: 2,
-          playName: "Double Drive",
-          playNumber: 2,
+          playName: "Falcons",
           playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-2.jpg",
+          playNumber: 2,
+          thumbnail_url: "/playbook/thumbnails/cropped-play-2.jpg",
           animation_url: null,
         },
-    
+
         {
           id: 3,
-          playName: "Boot Flood",
-          playNumber: 3,
+          playName: "Wake",
           playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-3.jpg",
+          playNumber: 3,
+          thumbnail_url: "/playbook/thumbnails/cropped-play-3.jpg",
           animation_url: null,
         },
-    
+
         {
           id: 4,
-          playName: "Slant Post Vert",
+          playName: "Twins X Motion",
+          playType: "offense",
           playNumber: 4,
-          playType: "defense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-4.jpg",
+          thumbnail_url: "/playbook/thumbnails/cropped-play-4.jpg",
           animation_url: null,
         },
-    
+
         {
           id: 5,
-          playName: "Whip Levels",
-          playNumber: 5,
+          playName: "9ers",
           playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-5.jpg",
+          playNumber: 5,
+          thumbnail_url: "/playbook/thumbnails/cropped-play-5.jpg",
           animation_url: null,
         },
-    
+
         {
           id: 6,
-          playName: "Ohio",
-          playNumber: 6,
+          playName: "Chargers",
           playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-6.jpg",
+          playNumber: 6,
+          thumbnail_url: "/playbook/thumbnails/cropped-play-6.jpg",
           animation_url: null,
         },
-    
+
+        // route concepts
         {
           id: 7,
-          playName: "Boot Slip",
-          playNumber: 7,
-          playType: "defense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-7.jpg",
+          playName: "HEELS",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-1.jpg",
           animation_url: null,
         },
     
         {
           id: 8,
-          playName: "Boot Post Comeback",
-          playNumber: 8,
-          playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
+          playName: "DEVILS",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-2.jpg",
           animation_url: null,
         },
     
         {
           id: 9,
-          playName: "Slant Flats",
-          playNumber: 9,
-          playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
+          playName: "HOKIE",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-3.jpg",
           animation_url: null,
         },
     
         {
           id: 10,
-          playName: "Drag Whip",
-          playNumber: 10,
-          playType: "defense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-10.jpg",
+          playName: "EAGLE",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-4.jpg",
           animation_url: null,
         },
     
         {
           id: 11,
-          playName: "X Levels Cross",
-          playNumber: 11,
-          playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-11.jpg",
+          playName: "SEMINOLE",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-5.jpg",
           animation_url: null,
         },
     
         {
           id: 12,
-          playName: "Z Alley Screen",
-          playNumber: 12,
-          playType: "offense",
-          thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-12.jpg",
+          playName: "PACK",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-6.jpg",
           animation_url: null,
-        }
+        },
+
+        {
+          id: 13,
+          playName: "TIGERS",
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-7.jpg",
+          animation_url: null,
+        },
+
+        {
+          id: 14,
+          playName: "CAVS",
+          playNumber: 12,
+          playType: "route-concepts",
+          thumbnail_url: "/playbook/thumbnails/cropped-route-concept-8.jpg",
+          animation_url: null,
+        },
+
+        // {
+        //   id: 15,
+        //   playName: "idk",
+        //   playNumber: 12,
+        //   playType: "defense",
+        //   thumbnail_url: "/playbook/thumbnails/cropped-route-concept-6.jpg",
+        //   animation_url: null,
+        // }
       ];
 
   const filteredPlays = useMemo(() => {
