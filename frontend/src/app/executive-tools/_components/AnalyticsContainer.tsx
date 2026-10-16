@@ -20,6 +20,7 @@ export default function AnalyticsContainer() {
                     description="Attendance trends and participation rates for practices during the season."
                     analytics={true}
                     actionHref="/"
+                    disabled={true}
                 />
                 <ToolCard 
                     icon={ <DonutChartIcon className="text-foreground text-[2.25rem]" strokeWidth={7}/>}
@@ -27,6 +28,7 @@ export default function AnalyticsContainer() {
                     description="Explore member demographics and team composition."
                     analytics={true}
                     actionHref="/"
+                    disabled={true}
                 />
                 <ToolCard 
                     icon={ <IncreaseGrowthIcon className="text-foreground text-[2.25rem]" strokeWidth={4}/>}
@@ -34,6 +36,7 @@ export default function AnalyticsContainer() {
                     description="Track changes in club membership and retention over time."
                     analytics={true}
                     actionHref="/"
+                    disabled={true}
                 />
 
             </div>

@@ -11,7 +11,7 @@ export const UserContext = createContext<User | null>(null);
 // run a query to get the current user
 const currentUser: User = {
     id: 1,
-    exec: false
+    exec: true
 };
 
 export default function CurrentUserProvider(
@@ -23,4 +23,3 @@ export default function CurrentUserProvider(
         </UserContext.Provider>
     );
 };
-
