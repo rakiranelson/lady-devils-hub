@@ -18,10 +18,10 @@
 ### Bugs and Issues encountered
 - For one of the users, when they created events and announcements, it duplicated them (not sure why yet)
 - For another the users the edit event modal kept closing on them, and they had to start over to create an event
-- People commented on how navigation back to the overview page wasn't the post intuitive at first
+- People commented on how navigation back to the overview page wasn't the most intuitive at first
 
 ### Visual Suggestions
-- Some people said the overall pages were maybe a little dark. Some suggestions for more contrasting colors
+- Some people said the pages were maybe a little dark. Some suggestions for more contrasting colors
 - Make some of the labels (e.g. announcements, events, wristband playbook) thicker
 - Users did say that things were visually clear and straightforward
 
