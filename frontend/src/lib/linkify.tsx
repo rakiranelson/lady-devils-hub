@@ -9,7 +9,7 @@ export default function linkify(text: string) {
                 href={part}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline"
+                className="text-primary-light underline"
             >
                 {part}
             </a>

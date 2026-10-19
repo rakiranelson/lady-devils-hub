@@ -54,7 +54,7 @@ export default function DatePickerDemo({ formName, required, date, setDate, widt
           <Calendar 
           mode="single" 
           defaultMonth={date}
-          // disabled={{ before: new Date() }}
+          disabled={{ before: new Date() }}
           selected={date} 
           onSelect={(selectedDate) => {
             setDate(selectedDate)
