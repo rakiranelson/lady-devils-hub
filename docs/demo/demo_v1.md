@@ -1,4 +1,4 @@
-**MVP Demo**
+# MVP Demo
 
 ## MVP Scope
 ### Users should be able to:
