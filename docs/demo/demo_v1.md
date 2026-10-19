@@ -1,8 +1,5 @@
 **MVP Demo**
 
-[SRS](docs/srs_v1.pdf)
-
-
 ## MVP Scope
 ### Users should be able to:
 - Create events
