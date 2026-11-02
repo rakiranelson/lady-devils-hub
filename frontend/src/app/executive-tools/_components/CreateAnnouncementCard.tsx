@@ -62,7 +62,7 @@ export function CreateAnnouncementCard({ oldAnnouncement }: Props) {
         
         const payload = {
             content: content,
-            expiration_date: expirationDate,
+            expiration_date: expirationDate ? format(expirationDate, "MM-dd-yyyy") : null,
             expiration_time: expirationTime,
             pinned: pinned,
         };

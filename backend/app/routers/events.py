@@ -121,6 +121,9 @@ def get_event_response_object(event, current_user, db: Session):
         tournament = get_tournament(event.id, current_user, db=db)
 
         deadline = tournament["registration_deadline"]
+
+        if deadline is not None:
+            deadline = deadline.astimezone(LOCAL_TZ)
         deadline_label = (
             f"{deadline.strftime('%m/%d')} @ {deadline.strftime('%I:%M%p').lstrip('0').lower()}"
             if deadline
@@ -332,8 +335,9 @@ def get_event_form_responses(event_id: int, db: Session = Depends(get_db)):
         deadline = tournament_details["registration_deadline"]
 
         if deadline is not None:
+            deadline = deadline.astimezone(LOCAL_TZ)
             registration_deadline_date = deadline.strftime("%m-%d-%Y")
-            registration_deadline_time = deadline.strftime("%I:%M %p").lstrip("0")
+            registration_deadline_time = deadline.strftime("%I:%M %p")
 
         requirements = [
             "group_transportation",

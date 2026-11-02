@@ -2,6 +2,7 @@ import PinIcon from "@/assets/icons/pin.svg";
 import AnnouncementEllipsis from "./AnnouncementEllipsis";
 import { useRef, useContext } from "react";
 import { UserContext } from "@/contexts/CurrentUserContext";
+import linkify from "@/lib/linkify";
 
 export type AnnouncementProps = {
     id: number;
@@ -28,7 +29,7 @@ export function Announcement(announcement : AnnouncementProps & { onRefetch: () 
                 { announcement.createdTime }
             </div>
             <div className={` ml-4 sm:text-base ${ announcement.pinned ? "font-semibold" : "text-foreground/85"} `}>
-                { announcement.content }
+                { linkify(announcement.content) }
             </div>
             <div className="ml-auto opacity-10 group-hover:opacity-100 text-sm">
                 { isExec && (

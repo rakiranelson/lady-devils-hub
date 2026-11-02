@@ -52,99 +52,51 @@ export default function Home() {
   const plays: CarouselItem[] = [
     {
       id: 1,
-      playName: "Mesh Spot",
+      playName: "Durham",
       playNumber: 1,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-1.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-1.jpg",
       animation_url: null,
     },
 
     {
       id: 2,
-      playName: "Double Drive",
+      playName: "Falcons",
       playNumber: 2,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-2.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-2.jpg",
       animation_url: null,
     },
 
     {
       id: 3,
-      playName: "Boot Flood",
+      playName: "Wake",
       playNumber: 3,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-3.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-3.jpg",
       animation_url: null,
     },
 
     {
       id: 4,
-      playName: "Slant Post Vert",
+      playName: "Twins X Motion",
       playNumber: 4,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-4.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-4.jpg",
       animation_url: null,
     },
 
     {
       id: 5,
-      playName: "Whip Levels",
+      playName: "9ers",
       playNumber: 5,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-5.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-5.jpg",
       animation_url: null,
     },
 
     {
       id: 6,
-      playName: "Ohio",
+      playName: "Chargers",
       playNumber: 6,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-6.jpg",
+      thumbnail_url: "/playbook/thumbnails/cropped-play-6.jpg",
       animation_url: null,
     },
-
-    {
-      id: 7,
-      playName: "Boot Slip",
-      playNumber: 7,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-7.jpg",
-      animation_url: null,
-    },
-
-    {
-      id: 8,
-      playName: "Boot Post Comeback",
-      playNumber: 8,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
-      animation_url: null,
-    },
-
-    {
-      id: 9,
-      playName: "Slant Flats",
-      playNumber: 9,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-8.jpg",
-      animation_url: null,
-    },
-
-    {
-      id: 10,
-      playName: "Drag Whip",
-      playNumber: 10,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-10.jpg",
-      animation_url: null,
-    },
-
-    {
-      id: 11,
-      playName: "X Levels Cross",
-      playNumber: 11,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-11.jpg",
-      animation_url: null,
-    },
-
-    {
-      id: 12,
-      playName: "Z Alley Screen",
-      playNumber: 12,
-      thumbnail_url: "/playbook/thumbnails/cropped-playbook 26-page-12.jpg",
-      animation_url: null,
-    }
   ];
 
 

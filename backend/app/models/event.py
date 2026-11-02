@@ -133,8 +133,8 @@ def format_date_time(event: Event):
         start_date = start_datetime.strftime("%m-%d-%Y")
 
         if same_day:
-            start_time = start_datetime.strftime("%I:%M %p").lstrip("0")
-            end_time = end_datetime.strftime("%I:%M %p").lstrip("0")
+            start_time = start_datetime.strftime("%I:%M %p")
+            end_time = end_datetime.strftime("%I:%M %p")
         else:
             end_date = end_datetime.strftime("%m-%d-%Y")
             is_multi_day = not same_day

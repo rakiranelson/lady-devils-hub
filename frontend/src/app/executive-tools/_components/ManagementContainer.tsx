@@ -35,6 +35,7 @@ export default function ManagementContainer() {
                     description="Collect team input to help determine event details and other decisions."
                     management={true}
                     actionHref="/"
+                    disabled={true}
                 />
                 <ToolCard 
                     icon={ <LoopIcon className="text-foreground text-[2.25rem]" strokeWidth={4}/>}
@@ -42,6 +43,7 @@ export default function ManagementContainer() {
                     description="Quickly create events for recurring practices for the season."
                     management={true}
                     actionHref="/"
+                    disabled={true}
                 />
 
             </div>

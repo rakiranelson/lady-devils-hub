@@ -53,7 +53,7 @@ export default function DatePickerDemo({ formName, required, date, setDate, widt
         <PopoverContent className="w-auto p-0">
           <Calendar 
           mode="single" 
-          month={date}
+          defaultMonth={date}
           disabled={{ before: new Date() }}
           selected={date} 
           onSelect={(selectedDate) => {
