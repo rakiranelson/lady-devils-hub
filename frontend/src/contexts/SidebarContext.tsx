@@ -53,9 +53,13 @@ export default function SidebarContentProvider(
         name: "Exec Profile",
         profile: { initials: "EP", size: 50 },
         navItems: [
-          { label: "Exec Tools", href: "/executive-tools" },
-          { label: "Events", href: "/events" },
-          { label: "Playbook", href: "/playbook" },
+          { label: "Admin Settings", href: "/admin"},
+          { label: "Exec Tools", href: "/executive-tools"},
+          { label: "Events", href: "/events"},
+          { label: "Playbook", href: "/playbook"},
+          { label: "Roster", href: "/roster"},
+          { label: "Resources", href: "/resources"},
+          { label: "Feedback", href: "/feedback"}
         ],
       }
     : {
@@ -67,6 +71,9 @@ export default function SidebarContentProvider(
         navItems: [
           { label: "Events", href: "/events"},
           { label: "Playbook", href: "/playbook"},
+          { label: "Roster", href: "/roster"},
+          { label: "Resources", href: "/resources"},
+          { label: "Feedback", href: "/feedback"}
         ]
       }
       
