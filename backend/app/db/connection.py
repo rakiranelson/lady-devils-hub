@@ -15,10 +15,9 @@ class Base(DeclarativeBase):
     pass
 
 
-# create instances of the db
+# create sessions of the db
 def get_db():
     db = SessionLocal()
-
     try:
         yield db
 

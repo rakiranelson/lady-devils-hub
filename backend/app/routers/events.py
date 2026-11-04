@@ -15,7 +15,7 @@ from app.models.event import (
     format_event_data,
     format_date_time,
 )
-from app.models.app_config import get_current_semester_id
+from app.models.app_config import get_app_config
 from app.models.practice import (
     PracticeResponse,
     PracticeDetailedResponse,
@@ -211,7 +211,7 @@ def match_db_format(event):
 def create_event(event: EventCreate, db: Session = Depends(get_db)):
 
     # get current semester_id
-    semester_id = get_current_semester_id(db)
+    semester_id = get_app_config(db).current_semester_id
 
     # get current user
     current_user = 1

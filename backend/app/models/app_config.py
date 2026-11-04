@@ -15,5 +15,5 @@ class AppConfig(Base):
     current = relationship("Semester")
 
 
-def get_current_semester_id(db: Session):
-    return db.scalar(select(AppConfig)).current_semester_id
+def get_app_config(db: Session):
+    return db.scalar(select(AppConfig))

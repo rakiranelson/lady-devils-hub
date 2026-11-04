@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DEBUG: bool
 
     DATABASE_URL: str
+    TEST_DATABASE_URL: str  # for testing db
     ALLOWED_ORIGINS: str
 
     SECRET_KEY: str = ""

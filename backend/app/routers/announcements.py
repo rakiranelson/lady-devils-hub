@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from app.models.announcement import Announcement
-from app.models.app_config import get_current_semester_id
+from app.models.app_config import get_app_config
 from app.core.timezone import LOCAL_TZ
 
 
@@ -90,7 +90,7 @@ def create_announcement(
 ):
 
     # get current semester_id
-    semester_id = get_current_semester_id(db)
+    semester_id = get_app_config(db).current_semester_id
 
     # get current user
     current_user = 1
