@@ -107,6 +107,7 @@ def delete_tournament(event_id: int, db: Session):
     tournament = db.scalar(select(Tournament).where(Tournament.id == event_id))
     if tournament:
         db.delete(tournament)
+        db.commit()
 
 
 def update_tournament(

@@ -200,14 +200,9 @@ def convert_event_input(event):
     if (not event.is_multi_day and event.end_date) or (
         event.is_multi_day and (event.start_time or event.end_time)
     ):
-        # if a single event has extra end date
-        # if multi day event has a start/end time
+        # if a single event has extra end date OR if multi day event has a start/end time
         raise ValueError(
             "The event data does not match the expected structure for its type."
-        )
-        raise HTTPException(
-            status_code=400,
-            detail="The event data does not match the expected structure for its type.",
         )
 
     return {

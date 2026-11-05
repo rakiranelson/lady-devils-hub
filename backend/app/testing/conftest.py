@@ -3,6 +3,9 @@ import pytest
 from app.config import settings
 from main import app
 
+from pathlib import Path
+from sqlalchemy import text
+
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 from app.db.connection import Base, get_db
@@ -20,7 +23,12 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_db():
-    Base.metadata.create_all(bind=engine)
+    # create the db schema
+    schema_sql = Path(__file__).parent.parent.parent.parent / "db/schema.sql"
+
+    with engine.connect() as conn:
+        conn.execute(text(schema_sql.read_text()))
+        conn.commit()
 
     session = TestingSessionLocal(bind=engine)
 
@@ -57,7 +65,12 @@ def setup_test_db():
     session.close()
 
     yield
-    Base.metadata.drop_all(bind=engine)
+
+    # drop the db schema
+    with engine.connect() as conn:
+        conn.execute(text("DROP SCHEMA public CASCADE;"))
+        conn.execute(text("CREATE SCHEMA public;"))
+        conn.commit()
 
 
 @pytest.fixture(scope="function")

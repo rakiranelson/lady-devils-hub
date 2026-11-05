@@ -28,9 +28,9 @@ class Event(Base):
     start_datetime: Mapped[Optional[datetime]]
     end_datetime: Mapped[Optional[datetime]]
     created_time: Mapped[datetime] = mapped_column(FetchedValue())
-    event_status: Mapped[str]
+    event_status: Mapped[str] = mapped_column(FetchedValue())
 
-    rsvp_open: Mapped[bool]
+    rsvp_open: Mapped[bool] = mapped_column(FetchedValue())
 
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
     creator = relationship("User")

@@ -47,6 +47,7 @@ def delete_practice(event_id: int, db: Session):
     practice = db.scalar(select(Practice).where(Practice.id == event_id))
     if practice:
         db.delete(practice)
+        db.commit()
 
 
 def update_practice(event_id, practice_type, db: Session):
