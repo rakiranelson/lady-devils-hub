@@ -221,6 +221,9 @@ def convert_event_input(event):
                 f"{event.start_date} {event.end_time}", "%m-%d-%Y %I:%M %p"
             ).replace(tzinfo=LOCAL_TZ)
 
+    if start_datetime and end_datetime and end_datetime <= start_datetime:
+        raise ValueError("End time must be after start time.")
+
     return {
         "name": event.name,
         "category": event.category,

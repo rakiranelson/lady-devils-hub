@@ -95,6 +95,23 @@ export function CreateEventCard({ oldEvent }: Props) {
             return;
         }
 
+        if (!isMultiDay && startTime !== "" && endTime !== "") {
+            const parsedStart = parse(startTime, "hh:mm a", new Date());
+            const parsedEnd = parse(endTime, "hh:mm a", new Date());
+            if (parsedEnd <= parsedStart) {
+                setError("End time must be after start time.");
+                return;
+            }
+        }
+
+        if (isMultiDay && startDate && endDate) {
+            if (endDate <= startDate) {
+                setError("End date must be after start date.");
+                return;
+            }
+        }
+
+
         !missingRequiredInfo ? setAutoOpenRSVP(true) : setAutoOpenRSVP(false);
 
         setPrevPage(page);
@@ -437,10 +454,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                     </div>
 
                                 </div>
-                                
                             </div>
-
-                            
                         }  
                         
                     </div>
