@@ -591,10 +591,10 @@ def test_format_event_form_datetime(
             None,
             "06:30 PM",
             "08:30 PM",
-            "",  # not being used in this test
-            [],  # not being used in this test
-            "",  # not being used in this test
-            "",  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
             False,  # not being used in this test
             "scheduled",
             True,
@@ -614,10 +614,10 @@ def test_format_event_form_datetime(
             None,
             "06:30 PM",
             "08:30 PM",
-            "",  # not being used in this test
-            [],  # not being used in this test
-            "",  # not being used in this test
-            "",  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
             False,  # not being used in this test
             "scheduled",
             False,
@@ -637,10 +637,10 @@ def test_format_event_form_datetime(
             None,
             "06:30 PM",
             "08:30 PM",
-            "",  # not being used in this test
-            [],  # not being used in this test
-            "",  # not being used in this test
-            "",  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
             False,  # not being used in this test
             "scheduled",
             False,
@@ -658,12 +658,12 @@ def test_format_event_form_datetime(
             "BRING YO CLEATS!",
             "11-17-2026",
             "11-19-2026",
-            "",
-            "",
-            "",  # not being used in this test
-            [],  # not being used in this test
-            "",  # not being used in this test
-            "",  # not being used in this test
+            None,
+            None,
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
+            None,  # not being used in this test
             True,  # not being used in this test
             "scheduled",
             True,
