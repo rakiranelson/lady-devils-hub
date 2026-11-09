@@ -46,6 +46,8 @@ def create_event(event, db: Session):
         end_datetime=event_dict["end_datetime"],
         rsvp_open=event_dict["rsvp_open"],
         event_status=event_dict["event_status"],
+        is_multi_day=event_dict["is_multi_day"],
+        start_time_provided=event_dict["start_time_provided"],
         created_by=current_user,
     )
 
@@ -147,7 +149,7 @@ def get_event_form_responses(event_id, db: Session):
     start_date, end_date, start_time, end_time, is_multi_day = (
         format_event_form_datetime(event)
     )
-    event_type = get_event_type(event.id, event.category, db)
+    event_type = get_event_type(event.id, event.category, db).lower()
 
     registration_deadline_date = ""
     registration_deadline_time = ""
@@ -238,6 +240,8 @@ def update_event(event_id, updated_event, db: Session):
     event.end_datetime = event_dict["end_datetime"]
     event.rsvp_open = event_dict["rsvp_open"]
     event.event_status = event_dict["event_status"]
+    event.is_multi_day = event_dict["is_multi_day"]
+    event.start_time_provided = event_dict["start_time_provided"]
 
     db.commit()
 

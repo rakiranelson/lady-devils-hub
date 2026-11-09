@@ -24,7 +24,7 @@ from app.services.service_events import *
 class EventCreate(BaseModel):
     name: str
     category: Literal["practice", "tournament", "game", "other"]
-    location_name: str
+    location_name: Optional[str] = None
     location_address: Optional[str] = None
     details: Optional[str] = None
     start_date: Optional[str] = None
@@ -36,6 +36,7 @@ class EventCreate(BaseModel):
     registration_deadline_date: Optional[str] = None
     registration_deadline_time: Optional[str] = None
     is_multi_day: bool
+    event_status: str
     rsvp_open: bool
 
 
@@ -59,6 +60,7 @@ class EventEditResponse(BaseModel):
     start_time: str
     end_time: str
     event_type: str
+    event_status: str
     additional_requirements: list[str]
     registration_deadline_date: str
     registration_deadline_time: str

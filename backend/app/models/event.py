@@ -29,6 +29,8 @@ class Event(Base):
     end_datetime: Mapped[Optional[datetime]]
     created_time: Mapped[datetime] = mapped_column(FetchedValue())
     event_status: Mapped[str] = mapped_column(FetchedValue())
+    is_multi_day: Mapped[bool] = mapped_column(FetchedValue())
+    start_time_provided: Mapped[bool] = mapped_column(FetchedValue())
 
     rsvp_open: Mapped[bool] = mapped_column(FetchedValue())
 

@@ -28,6 +28,7 @@ export type OldEvent = {
     startTime: string,
     endTime: string,
     eventType: string,
+    eventStatus: string, // NEW VARIABLE
     additionalRequirements: string[],
     registrationDeadlineDate: string,
     registrationDeadlineTime: string,
@@ -69,13 +70,15 @@ export function CreateEventCard({ oldEvent }: Props) {
     const [registrationDeadlineTime, setRegistrationDeadlineTime] = useState<string>(oldEvent?.registrationDeadlineTime ?? "");
     const [details, setDetails] = useState<string>(oldEvent?.details ?? "");
     const [autoOpenRSVP, setAutoOpenRSVP] = useState(oldEvent?.rsvpOpen ?? false);
-    const isTentative =
+    const missingRequiredInfo =
         (
             startDate === undefined ||
             (locationName === "" && locationAddress === "") ||
             (isMultiDay ? endDate === undefined : (startTime === "" || endTime === ""))
         );
-
+    const [scheduled, setScheduled] = useState<boolean>(
+        oldEvent ? oldEvent.eventStatus === "scheduled" : true
+    );
     const handleNext = () => {
         setError("");
 
@@ -92,7 +95,7 @@ export function CreateEventCard({ oldEvent }: Props) {
             return;
         }
 
-        !isTentative ? setAutoOpenRSVP(true) : setAutoOpenRSVP(false);
+        !missingRequiredInfo ? setAutoOpenRSVP(true) : setAutoOpenRSVP(false);
 
         setPrevPage(page);
         setPage(page + 1); 
@@ -115,7 +118,7 @@ export function CreateEventCard({ oldEvent }: Props) {
     const handleSubmit = async () => {
         const missingFields: string[] = [];
 
-        if (!isTentative && category === "tournament") {
+        if (!missingRequiredInfo && category === "tournament") {
             if (registrationDeadlineDate === undefined || registrationDeadlineTime == undefined) {
                 missingFields.push("Registration Deadline");
             }
@@ -138,6 +141,7 @@ export function CreateEventCard({ oldEvent }: Props) {
             end_date: isMultiDay ? (endDate ? format(endDate, "MM-dd-yyyy") : null) : null ,
             start_time: !isMultiDay ? (startTime === "" ? null : startTime) : null,
             end_time: !isMultiDay ? (endTime === "" ? null : endTime) : null,
+            event_status: scheduled ? "scheduled" : "tentative",
 
             // extra variables
             event_type: eventType === "" 
@@ -361,7 +365,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                 <div className="flex gap-2 items-end">
                                     <DatePickerDemo
                                         formName="Registration Deadline"
-                                        required={isTentative ? false: true}
+                                        required={missingRequiredInfo ? false: true}
                                         date={registrationDeadlineDate} 
                                         setDate={setRegistrationDeadlineDate}
                                         width={200}
@@ -383,7 +387,7 @@ export function CreateEventCard({ oldEvent }: Props) {
 
                     <div className="flex flex-col gap-3 py-3 mb-10">
 
-                        { isTentative ?
+                        { missingRequiredInfo ?
                             <div className="bg-metadata/30 mt-2 rounded-[5px] flex items-center py-3 px-4 gap-x-5">
                         
                                 <NoticeIcon className="text-[2.25rem] flex-none"/>
@@ -398,17 +402,42 @@ export function CreateEventCard({ oldEvent }: Props) {
                                     <span className="text-metadata font-bold ml-1">*</span>
                                 </div>
                                 
-                                <div className="text-sm leading-snug">
-                                    This event will be saved as <span className="font-semibold underline">scheduled</span> and RSVP will automatically open for users. To keep RSVP closed until later, uncheck the option below.
-                                </div>
+                                <div className="flex justify-between">
 
-                                <div className="text-[0.825rem] ">
-                                    <Checkbox
-                                        text="Automatically Open RSVP"
-                                        check={autoOpenRSVP}
-                                        onChange={setAutoOpenRSVP}
-                                    />
+                                    <div className="text-base leading-snug inline-flex flex-col items-start w-fit gap-[6px]">
+                                        <div className="bg-background/75 border-1 border-muted-1/50 rounded-[5] w-fit p-4 flex gap-3">
+                                            <span className={` ${ !scheduled ? "font-medium text-foreground" : ""} `}>Tentative</span>
+                                            <FormToggle
+                                                toggle={scheduled}
+                                                onChange={setScheduled}
+                                                size={14}
+                                            />
+                                            <span className={` ${ scheduled ? "font-medium text-foreground" : ""} `}>Scheduled</span>
+                                        </div>
+                                        
+                                        <div className="text-sm leading-snug text-base pl-1">
+                                            { scheduled ? "Event is confirmed." : "Event is subject to change."}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-[6px]">
+                                        <div className="flex flex-col text-base gap-[4px] bg-background/75 border-1 border-muted-1/50 rounded-[5px] pt-3 p-4 px-6">
+                                            <Checkbox
+                                                text="Automatically Open RSVP"
+                                                check={autoOpenRSVP}
+                                                onChange={setAutoOpenRSVP}
+                                            />
+                            
+                                        </div>
+
+                                        <div className="text-sm leading-snug text-base">
+                                                Uncheck to open RSVP later.
+                                            </div>
+
+                                    </div>
+
                                 </div>
+                                
                             </div>
 
                             
@@ -419,7 +448,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                     <div className="mt-auto mb-1 flex gap-5 items-center text-lg select-none">
                         <button onClick={ handleBack } className={`flex-[1] font-semibold rounded-[3.5px] p-[6px] bg-muted-1 hover:bg-muted-1/60 hover:shadow-button hover:cursor-pointer transition-all`}>Back</button>
 
-                        <button onClick={ handleSubmit } className={`flex-[2] font-semibold rounded-[3.5px] p-[6px] bg-primary hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>{ `Save as ${ isTentative ? "Tentative" : "Scheduled"} `}</button>
+                        <button onClick={ handleSubmit } className={`flex-[2] font-semibold rounded-[3.5px] p-[6px] bg-primary hover:bg-[hsl(242,73%,52%)] hover:shadow-button hover:cursor-pointer transition-all`}>{ `Save as ${ missingRequiredInfo || !scheduled ? "Tentative" : "Scheduled"} `}</button>
 
                         <button onClick={ handleCancel } className="h-full flex px-3 items-center underline text-muted-1 hover:cursor-pointer hover:text-foreground">Cancel</button>
                     </div>
