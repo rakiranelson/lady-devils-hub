@@ -16,7 +16,7 @@ export default function Checkbox({ check = false, onChange, text}: CheckboxProps
             <div className={` w-[15px] h-[15px] outline-1 ${ check ? "outline-muted-1" : "outline-muted-1/50"} outline-muted-1 flex items-center justify-center group-hover:outline-2 group-hover:outline-primary `}>
                 {check && <SelectCheckIcon className="text-[0.5rem] text-foreground"/>}
             </div>
-            <div className={` select-none ${ check ? "text-foreground" : "text-foreground/30" }`}>
+            <div className={` pt-1 select-none ${ check ? "text-foreground" : "text-foreground/30" }`}>
                 {text}
             </div>
         </div>

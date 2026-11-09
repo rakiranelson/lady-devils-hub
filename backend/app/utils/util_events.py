@@ -19,7 +19,7 @@ def get_event_type(event_id, category, db):
     if category == "tournament":
         event_type = get_tournament_type(event_id, db=db)
 
-    return event_type.lower()
+    return event_type
 
 
 def format_event_data(event: Event):
@@ -37,22 +37,22 @@ def format_event_data(event: Event):
         event.end_datetime.astimezone(LOCAL_TZ) if event.end_datetime else None
     )
 
-    same_day = start_datetime.date() == end_datetime.date()
-
     # format date and time labels
     if start_datetime and end_datetime:
-        if same_day:
+
+        if not event.is_multi_day:
             date_label = start_datetime.strftime("%A, %b %d")
             start_period = start_datetime.strftime("%p")
             end_period = end_datetime.strftime("%p")
 
-            if start_period == end_period:  # both am or both pm
-                start = start_datetime.strftime("%I:%M").lstrip("0")
-            else:
-                start = start_datetime.strftime("%I:%M%p").lstrip("0").lower()
+            if event.start_time_provided:
+                if start_period == end_period:  # both am or both pm
+                    start = start_datetime.strftime("%I:%M").lstrip("0")
+                else:
+                    start = start_datetime.strftime("%I:%M%p").lstrip("0").lower()
 
-            end = end_datetime.strftime("%I:%M%p").lstrip("0").lower()
-            time = f"{start} - {end}"
+                end = end_datetime.strftime("%I:%M%p").lstrip("0").lower()
+                time = f"{start} - {end}"
 
         else:
             start_day = start_datetime.strftime("%a, %b %d")
@@ -134,7 +134,7 @@ def format_event_form_datetime(event: Event):
     end_date = ""
     start_time = ""
     end_time = ""
-    is_multi_day = False
+    is_multi_day = event.is_multi_day
 
     start_datetime = (
         event.start_datetime.astimezone(LOCAL_TZ) if event.start_datetime else None
@@ -144,15 +144,16 @@ def format_event_form_datetime(event: Event):
     )
 
     if start_datetime:
-        same_day = start_datetime.date() == end_datetime.date()
         start_date = start_datetime.strftime("%m-%d-%Y")
 
-        if same_day:
-            start_time = start_datetime.strftime("%I:%M %p")
-            end_time = end_datetime.strftime("%I:%M %p")
-        else:
-            end_date = end_datetime.strftime("%m-%d-%Y")
-            is_multi_day = not same_day
+        if not is_multi_day:  # same day
+            if event.start_time_provided:
+                start_time = start_datetime.strftime("%I:%M %p")
+                if end_datetime:
+                    end_time = end_datetime.strftime("%I:%M %p")
+
+    if end_datetime and event.is_multi_day:
+        end_date = end_datetime.strftime("%m-%d-%Y")
 
     return start_date, end_date, start_time, end_time, is_multi_day
 
@@ -160,20 +161,36 @@ def format_event_form_datetime(event: Event):
 def convert_event_input(event):
     """Converts event input data into the format expected by the database."""
 
-    is_tentative = (
+    if (not event.is_multi_day and event.end_date) or (
+        event.is_multi_day and (event.start_time or event.end_time)
+    ):
+        # if a single event has extra end date OR if multi day event has a start/end time
+        raise ValueError(
+            "The event data does not match the expected structure for its type."
+        )
+
+    missing_required_info = (
         event.start_date is None
         or (event.location_name is None and event.location_address is None)
         or (
             (event.is_multi_day and event.end_date is None)
-            or (not event.is_multi_day and event.start_time is None)
+            or (not event.is_multi_day and (event.start_time is None))
         )
     )
 
-    event_status = "tentative" if is_tentative else "scheduled"
+    if missing_required_info:
+        event_status = "tentative"
+        rsvp_open = False
+    else:
+        if event.event_status not in ("scheduled", "tentative"):
+            raise ValueError(f"Invalid event_status: {event.event_status}")
+        event_status = event.event_status
+        rsvp_open = event.rsvp_open
 
     # datetime logic
     start_datetime = None
     end_datetime = None
+    start_time_provided = False
 
     if event.is_multi_day:
         # multi day events
@@ -188,22 +205,21 @@ def convert_event_input(event):
 
     else:
         # single day events
-        if event.start_date and event.start_time:
-            start_datetime = datetime.strptime(
-                f"{event.start_date} {event.start_time}", "%m-%d-%Y %I:%M %p"
-            ).replace(tzinfo=LOCAL_TZ)
+        if event.start_date:
+            if event.start_time:
+                start_datetime = datetime.strptime(
+                    f"{event.start_date} {event.start_time}", "%m-%d-%Y %I:%M %p"
+                ).replace(tzinfo=LOCAL_TZ)
+                start_time_provided = True
+            else:
+                start_datetime = datetime.strptime(
+                    event.start_date, "%m-%d-%Y"
+                ).replace(tzinfo=LOCAL_TZ)
+
         if event.start_date and event.end_time:
             end_datetime = datetime.strptime(
                 f"{event.start_date} {event.end_time}", "%m-%d-%Y %I:%M %p"
             ).replace(tzinfo=LOCAL_TZ)
-
-    if (not event.is_multi_day and event.end_date) or (
-        event.is_multi_day and (event.start_time or event.end_time)
-    ):
-        # if a single event has extra end date OR if multi day event has a start/end time
-        raise ValueError(
-            "The event data does not match the expected structure for its type."
-        )
 
     return {
         "name": event.name,
@@ -213,8 +229,10 @@ def convert_event_input(event):
         "event_details": event.details,
         "start_datetime": start_datetime,
         "end_datetime": end_datetime,
-        "rsvp_open": event.rsvp_open,
+        "rsvp_open": rsvp_open,
         "event_status": event_status,
+        "is_multi_day": event.is_multi_day,
+        "start_time_provided": start_time_provided,
     }
 
 

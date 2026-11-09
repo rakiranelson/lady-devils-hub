@@ -2,7 +2,7 @@ import pytest
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from datetime import datetime, timezone
+from datetime import datetime
 from app.core.timezone import LOCAL_TZ
 
 from app.models.practice import *
@@ -22,7 +22,7 @@ def test_add_practice(db_session: Session):
     add_practice(event_id=1, practice_type="regular", db=db_session)
 
     practice = db_session.scalar(select(Practice))
-    assert practice is not None, "must successfully write practice to db"
+    assert practice is not None, "Must successfully write practice to db"
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_delete_practice(db_session: Session):
         select(Practice).where(Practice.id == 1)
     )  # see if None is returned
 
-    assert result is None, "practice must be removed from the db"
+    assert result is None, "Practice must be removed from the db"
 
 
 @pytest.mark.parametrize(
@@ -138,7 +138,7 @@ def test_add_tournament(
     )
 
     tournament = db_session.scalar(select(Tournament))
-    assert tournament is not None, "must successfully write tournament to db"
+    assert tournament is not None, "Must successfully write tournament to db"
 
 
 @pytest.mark.parametrize(
@@ -296,11 +296,11 @@ def test_delete_tournament(
             ["group_transportation", "lodging"],
             "11-30-2026",
             "04:00 PM",
-            "conditioning",  # updated values
+            "other",  # updated values
             ["group_transportation"],
             "11-28-2026",
             "07:00 PM",
-            "Conditioning",  # expected values
+            "Other",  # expected values
             datetime(2026, 11, 28, 19, 0, 0, tzinfo=LOCAL_TZ),
             True,
             False,
@@ -363,4 +363,4 @@ def test_update_tournament(
     ), f"Lodging required is not {expected_lodging_required}"
 
     # needs to be updated later
-    assert tournament["is_registered"] is False, f"Is registered is not False"
+    assert tournament["is_registered"] is False, f"is_registered should not be False"
