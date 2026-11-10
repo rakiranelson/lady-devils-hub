@@ -76,38 +76,44 @@ DetailedEventResponse = (
 router = APIRouter(prefix="/events", tags=["events"])
 
 
-@router.post("/", response_model=EventCreateResponse)
+@router.post(
+    "/", response_model=EventCreateResponse, status_code=status.HTTP_201_CREATED
+)
 def create_event_endpoint(event: EventCreate, db: Session = Depends(get_db)):
     return create_event(event, db)  # from service_events.py
 
 
-@router.get("/", response_model=list[EventResponse])
+@router.get("/", response_model=list[EventResponse], status_code=status.HTTP_200_OK)
 def get_events_endpoint(db: Session = Depends(get_db)):
-    return get_events(db)
+    return get_events(db)  # from service_events.py
 
 
-@router.get("/overview", response_model=list[EventResponse])
+@router.get(
+    "/overview", response_model=list[EventResponse], status_code=status.HTTP_200_OK
+)
 def get_overview_events(limit: int, db: Session = Depends(get_db)):
-    return get_n_upcoming_events(limit, db)
+    return get_n_upcoming_events(limit, db)  # from service_events.py
 
 
-@router.get("/{event_id}", response_model=DetailedEventResponse)
+@router.get(
+    "/{event_id}", response_model=DetailedEventResponse, status_code=status.HTTP_200_OK
+)
 def get_event_details_endpoint(event_id: int, db: Session = Depends(get_db)):
-    return get_event_details(event_id, db)
+    return get_event_details(event_id, db)  # from service_events.py
 
 
 @router.patch("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 def update_event_endpoint(
     event_id: int, updated_event: EventCreate, db: Session = Depends(get_db)
 ):
-    return update_event(event_id, updated_event, db)
+    return update_event(event_id, updated_event, db)  # from service_events.py
 
 
 @router.patch("/{event_id}/cancel", status_code=status.HTTP_204_NO_CONTENT)
 def cancel_event_endpoint(event_id: int, db: Session = Depends(get_db)):
-    return cancel_event(event_id, db)
+    return cancel_event(event_id, db)  # from service_events.py
 
 
 @router.delete("/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_event(event_id: int, db: Session = Depends(get_db)):
-    return delete_event(event_id, db)
+def delete_event_endpoint(event_id: int, db: Session = Depends(get_db)):
+    return delete_event(event_id, db)  # from service_events.py

@@ -279,7 +279,7 @@ def test_create_event_bad_input(
     with pytest.raises(HTTPException) as e:
         create_event(event, db_session)
 
-    assert e.value.status_code == status.HTTP_404_NOT_FOUND
+    assert e.value.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.parametrize(
