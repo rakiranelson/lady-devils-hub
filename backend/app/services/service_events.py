@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -33,7 +33,7 @@ def create_event(event, db: Session):
     try:
         event_dict = convert_event_input(event)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     new = Event(
         name=event_dict["name"],
@@ -71,7 +71,10 @@ def create_event(event, db: Session):
         print("ERROR INSIDE PRACTICE/TOURNAMENT INSERT:", repr(e))
         db.delete(new)
         db.commit()
-        raise HTTPException(status_code=500, detail="Failed to create event.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create event. Internal server error.",
+        )
 
     return new
 
@@ -127,7 +130,9 @@ def get_event_details(event_id, db: Session):
     current_user = 1
 
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
 
     event_response = get_event_response_dict(event, current_user, db)
 
@@ -144,7 +149,9 @@ def get_event_form_responses(event_id, db: Session):
     current_user = 1
 
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
 
     start_date, end_date, start_time, end_time, is_multi_day = (
         format_event_form_datetime(event)
@@ -180,6 +187,7 @@ def get_event_form_responses(event_id, db: Session):
         "registration_deadline_date": registration_deadline_date,
         "registration_deadline_time": registration_deadline_time,
         "is_multi_day": is_multi_day,
+        "event_status": event.event_status,
         "rsvp_open": event.rsvp_open,
     }
 
@@ -189,12 +197,14 @@ def update_event(event_id, updated_event, db: Session):
 
     event = db.scalar(select(Event).where(Event.id == event_id))
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
 
     try:
         event_dict = convert_event_input(updated_event)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     old_category = event.category
     new_category = event_dict["category"]
@@ -252,7 +262,9 @@ def cancel_event(event_id, db: Session):
     event = db.scalar(select(Event).where(Event.id == event_id))
 
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
 
     event.event_status = "canceled"
     db.commit()
@@ -264,7 +276,9 @@ def delete_event(event_id, db: Session):
     event = db.scalar(select(Event).where(Event.id == event_id))
 
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event not found"
+        )
 
     db.delete(event)
     db.commit()

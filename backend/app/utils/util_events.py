@@ -222,7 +222,7 @@ def convert_event_input(event):
             ).replace(tzinfo=LOCAL_TZ)
 
     if start_datetime and end_datetime and end_datetime <= start_datetime:
-        raise ValueError("End time must be after start time.")
+        raise ValueError("End datetime must be after start datetime.")
 
     return {
         "name": event.name,
