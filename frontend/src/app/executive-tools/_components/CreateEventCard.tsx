@@ -413,11 +413,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                 </span>
                             </div>
                             :
-                            <div className="flex flex-col gap-2 text-foreground/60">
-                                <div>
-                                    <span className="text-foreground/75 font-semibold">Note</span>
-                                    <span className="text-metadata font-bold ml-1">*</span>
-                                </div>
+                            <div className="flex flex-col gap-2 text-foreground/60 select-none">
                                 
                                 <div className="flex justify-between">
 
@@ -438,7 +434,7 @@ export function CreateEventCard({ oldEvent }: Props) {
                                     </div>
 
                                     <div className="flex flex-col gap-[6px]">
-                                        <div className="flex flex-col text-base gap-[4px] bg-background/75 border-1 border-muted-1/50 rounded-[5px] pt-3 p-4 px-6">
+                                        <div className="flex flex-col text-base gap-[4px] bg-background/75 border-1 border-muted-1/50 rounded-[5px] py-[13px] px-6">
                                             <Checkbox
                                                 text="Automatically Open RSVP"
                                                 check={autoOpenRSVP}
@@ -447,9 +443,9 @@ export function CreateEventCard({ oldEvent }: Props) {
                             
                                         </div>
 
-                                        <div className="text-sm leading-snug text-base">
-                                                Uncheck to open RSVP later.
-                                            </div>
+                                        <div className="text-sm leading-snug text-base pl-1">
+                                                { autoOpenRSVP ? "Uncheck to open RSVP later." : "Check to open RVSP now." }
+                                        </div>
 
                                     </div>
 
